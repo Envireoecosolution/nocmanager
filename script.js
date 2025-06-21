@@ -90,7 +90,20 @@ async function getData() {
 }
 
 function searchClients() {
+
+  // Hide form and table when searching
   document.getElementById('formContainer').style.display = 'none';
+
+// Hide dashboard when any navbar item except companyName is clicked
+  const dashboard = document.getElementById("dashboardSection");
+  if (dashboard) dashboard.classList.add("hidden");
+  const statsGrid = document.querySelector('.stats-grid');
+  const chartsGrid = document.querySelector('.charts-grid');
+  const expiringTable = document.querySelector('.expiring-table');
+  if (statsGrid) statsGrid.style.display = 'none';
+  if (chartsGrid) chartsGrid.style.display = 'none';
+  if (expiringTable) expiringTable.style.display = 'none';
+
   const query = document.getElementById('searchBar')?.value.trim().toLowerCase() || '';
   if (!query) return getData();
 
