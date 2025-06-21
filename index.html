@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="description" content="Envireo Eco Solution Pvt. Ltd. - Your partner in environmental solutions." />
+  <meta name="keywords" content="Envireo, Eco Solution, Environmental Services, NOC Management" />
+  <meta name="author" content="Envireo Eco Solution Pvt. Ltd." />
+  <title>NOC management</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+
+<body>
+  <nav class="navbar">
+    <div class="navbar-left">
+      <img src="logo.jpeg" alt="Company Logo">
+      <h1 id="companyName" style="cursor: pointer;">Envireo Eco Solutions</h1>
+    </div>
+
+    <div class="navbar-center">
+        <input type="text" id="searchBar" placeholder="Client Name or Application No." />
+        <button type="button" id="searchButton">Go</button>
+    </div>
+
+    <div class="navbar-right">
+      <a href="#" onclick="goHome()">Home</a>
+      <a href="#" onclick="filterOngoing()">Ongoing <br>NOCs</a>
+      <a href="#" onclick="filterExpiring()">Expiring in <br>90 Days</a>
+      <a href="#" onclick="addApp()">Add New <br>Application</a>
+      <a href="#" onclick="showLoginForm()">Login</a>
+      <div id="authContainer" style="display:none;">
+      <h2 id="authTitle">Login</h2>
+      <form id="authForm">
+      <label>Email: <input type="email" name="email" required /></label><br>
+      <label>Password: <input type="password" name="password" required /></label><br>
+      <button type="submit">Login</button>
+      </form>
+      <p id="toggleLink" style="cursor:pointer; color:blue;">New user? Sign up here</p>
+        <button onclick="logoutUser()">Logout</button>
+    </div>
+
+    </div>
+  </nav>
+
+    <div class="main">
+    <div id="quoteButtonContainer" style="display: flex; justify-content: space-between; align-items: center; margin: 0px 0px;">
+
+</div>
+
+
+  <!-- dashboard -->
+
+  <div id="dashboardSection">
+
+<div class="dashboard-container">
+
+  <div class="stats-grid">
+    <div class="stat-card"><h3>Total Applications</h3><p id="totalApps">0</p></div>
+    <div class="stat-card"><h3>Closed</h3><p id="closedApps">0</p></div>
+    <div class="stat-card"><h3>In Progress</h3><p id="inProgressApps">0</p></div>
+    <div class="stat-card"><h3>Expiring Soon</h3><p id="expiringApps">0</p></div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h4>Application Status</h4>
+      <canvas id="statusPieChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h4>Applications by Month</h4>
+      <canvas id="monthlyBarChart"></canvas>
+    </div>
+  </div>
+  </div>
+
+  <div class="expiring-table">
+    <h3>NOCs Expiring in Next 90 Days</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Client</th>
+          <th>Expiry Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="expiringTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+
+    <div class="table-wrapper" style="display: none;">
+    <table>
+      <thead>
+        <tr>
+          <th>Application No.</th>
+          <th>Client Name</th>
+          <th>Status</th>
+          <th>Application Type</th>
+          <th>Login ID</th>
+          <th>Password</th>
+          <th>Handled By</th>
+          <th>NOC Date</th>
+          <th>NOC Expiry Date</th>
+          <th>Application Status</th>
+          <th>Remarks</th>
+        </tr>
+      </thead>
+      <tbody id="clientTable">
+        <!-- Dynamic data rows from JS will be inserted here -->
+      </tbody>
+    </table>
+    </div>
+         <div id="formContainer" style="display: none;" class="form-wrapper"></div>
+  </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@1"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1"></script>
+<script src="script.js"></script>
+<script src="form.js"></script>
+<script src="dashboard.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
