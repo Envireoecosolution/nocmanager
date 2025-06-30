@@ -65,6 +65,9 @@ function renderAppForm(mode, client = {}) {
     const formData = new FormData(e.target);
     const formValues = Object.fromEntries(formData.entries());
 
+    formValues.nocdate = formValues.nocdate.trim() === "" ? null : formValues.nocdate;
+    formValues.nocexpirydate = formValues.nocexpirydate.trim() === "" ? null : formValues.nocexpirydate;
+
     if (isUpdate) formValues.appno = client.appno;
 
     if (isUpdate) {
