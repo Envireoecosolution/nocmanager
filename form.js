@@ -26,10 +26,20 @@ function renderAppForm(mode, client = {}) {
           <input type="text" id="clientname" name="clientname" autocomplete="on" value="${client.clientname || ''}" required>
         </label><br>
         <label>Status:
-          <input type="text" name="status" value="${client.status || ''}">
+        <select name="status" style="width: 100%; background-color: black; color: white; border: 1px solid #444; padding: 8px; border-radius: 4px; font-size: 14px;">
+        <option value="" style="background-color: black; color: white;">-- Select Status --</option>
+        <option value="Merged" style="background-color: black; color: white;">Merged</option>
+        <option value="On Hold" style="background-color: black; color: white;">On Hold</option>
+        <option value="Closed" style="background-color: black; color: white;">Closed</option>
+        <option value="Working" style="background-color: black; color: white;">Working</option>
+        </select>
         </label><br>
         <label>Application Type:
-          <input type="text" name="apptype" value="${client.apptype || ''}">
+        <select name="apptype" style="width: 100%; background-color: black; color: white; border: 1px solid #444; padding: 8px; border-radius: 4px; font-size: 14px;">
+        <option value="" style="background-color: black; color: white;">-- Select Type --</option>
+        <option value="New" style="background-color: black; color: white;">New</option>
+        <option value="Renewal" style="background-color: black; color: white;">Renewal</option>
+        </select>
         </label><br>
         <label>Login ID:
           <input type="text" name="loginid" value="${client.loginid || ''}" required>
@@ -47,8 +57,25 @@ function renderAppForm(mode, client = {}) {
           <input type="date" name="nocexpirydate" value="${client.nocexpirydate || ''}">
         </label><br>
         <label>Application Status:
-          <input type="text" name="appstatus" value="${client.appstatus || ''}">
-        </label><br>
+  <select name="appstatus" required style="width: 100%; background-color: black; color: white; border: 1px solid #444; padding: 8px; border-radius: 4px; font-size: 14px;">
+    <option value="" style="background-color: black; color: white;">-- Select Application Status --</option>
+    <option value="Application Submitted fees not paid" style="background-color: black; color: white;">Application Submitted fees not paid</option>
+    <option value="Application Submitted fees paid" style="background-color: black; color: white;">Application Submitted fees paid</option>
+    <option value="Approval Pending for payment of Tariff" style="background-color: black; color: white;">Approval Pending for payment of Tariff</option>
+    <option value="Marked to Applicant to upload signed Application" style="background-color: black; color: white;">Marked to Applicant to upload signed Application</option>
+    <option value="Permission Certificate Issued" style="background-color: black; color: white;">Permission Certificate Issued</option>
+    <option value="Observation raised by Authority" style="background-color: black; color: white;">Observation raised by Authority</option>
+    <option value="Observation raised by CTO to Applicant" style="background-color: black; color: white;">Observation raised by CTO to Applicant</option>
+    <option value="Recommended to Authority" style="background-color: black; color: white;">Recommended to Authority</option>
+    <option value="Recommended to Technical Committee" style="background-color: black; color: white;">Recommended to Technical Committee</option>
+    <option value="Rejected by Authority" style="background-color: black; color: white;">Rejected by Authority</option>
+    <option value="Reply to Observation Submitted" style="background-color: black; color: white;">Reply to Observation Submitted</option>
+    <option value="Return with Approved by Competent Authority" style="background-color: black; color: white;">Return with Approved by Competent Authority</option>
+    <option value="Returned with Observation by Competent Authority for reviewed." style="background-color: black; color: white;">Returned with Observation by Competent Authority for reviewed.</option>
+    <option value="Signed Application Uploaded by Applicant" style="background-color: black; color: white;">Signed Application Uploaded by Applicant</option>
+    <option value="Under Observation" style="background-color: black; color: white;">Under Observation</option>
+  </select>
+</label><br>
         <div class="form-row">
           <label>Remarks:</label>
           <textarea name="remarks" rows="4">${client.remarks || ''}</textarea>

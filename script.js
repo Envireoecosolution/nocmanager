@@ -67,7 +67,7 @@ function populateTable(data) {
   tableBody.innerHTML = '';
 
   data.forEach(client => {
-    const showPen = client.status?.toLowerCase() === 'working' || client.status?.toLowerCase() === 'on hold';
+    const showPen =true; // Show edit icon for all rows
     tableBody.innerHTML += renderTableRow(client, showPen);
   });
 
