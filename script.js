@@ -67,7 +67,7 @@ function populateTable(data) {
   tableBody.innerHTML = '';
 
   data.forEach(client => {
-    const showPen = client.status?.toLowerCase() === 'working';
+    const showPen = client.status?.toLowerCase() === 'working' || client.status?.toLowerCase() === 'on hold';
     tableBody.innerHTML += renderTableRow(client, showPen);
   });
 
@@ -204,16 +204,9 @@ document.getElementById('searchBar')?.addEventListener('keydown', e => {
 });
 
 // Water quote + button setup
+// Excel Download Button Setup
 document.addEventListener('DOMContentLoaded', () => {
-  
-
   const quoteContainer = document.getElementById('quoteButtonContainer');
-  const quoteDiv = document.getElementById('welcomeNote');
-
-  if (quoteDiv) {
-    quoteDiv.textContent = `"${quotes[new Date().getDate() % quotes.length]}"`;
-  }
-
   const existingBtn = document.getElementById('excelDownloadBtn');
   if (!quoteContainer || existingBtn) return;
 
@@ -231,6 +224,8 @@ document.addEventListener('DOMContentLoaded', () => {
     cursor: pointer;
     transition: background-color 0.3s ease;
     display: none;
+    float: left;
+    margin-right: auto;
   `;
   btn.onmouseover = () => btn.style.backgroundColor = "#0056b3";
   btn.onmouseout = () => btn.style.backgroundColor = "#007bff";
@@ -241,7 +236,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
     XLSX.writeFile(wb, 'noc_data.xlsx');
   };
-
   quoteContainer.appendChild(btn);
   toggleExcelButton(false); // Initially hidden
 });
@@ -273,29 +267,31 @@ document.getElementById('companyName').addEventListener('click', () => {
 });
 
 
-
-
-function goHome() {
-  // Hide form and table
-  const formContainer = document.getElementById('formContainer');
-  if (formContainer) formContainer.style.display = 'none';
-
-  const tableWrapper = document.querySelector('.table-wrapper');
-  if (tableWrapper) tableWrapper.style.display = 'none';
-
-  // Hide Excel download button
-  toggleExcelButton(false);
-
-  // Show dashboard container
-  const dashboard = document.getElementById("dashboardSection");
-  if (dashboard) dashboard.classList.remove("hidden");
-
-  // Reset individual dashboard parts to their proper layout
-  const statsGrid = document.querySelector('.stats-grid');
-  const chartsGrid = document.querySelector('.charts-grid');
-  const expiringTable = document.querySelector('.expiring-table');
-
-  if (statsGrid) statsGrid.style.removeProperty('display');     // use flex to match CSS
-  if (chartsGrid) chartsGrid.style.removeProperty('display');
-  if (expiringTable) expiringTable.style.removeProperty('display');
+function payments() {
+  
 }
+
+// function goHome() {
+//   // Hide form and table
+//   const formContainer = document.getElementById('formContainer');
+//   if (formContainer) formContainer.style.display = 'none';
+
+//   const tableWrapper = document.querySelector('.table-wrapper');
+//   if (tableWrapper) tableWrapper.style.display = 'none';
+
+//   // Hide Excel download button
+//   toggleExcelButton(false);
+
+//   // Show dashboard container
+//   const dashboard = document.getElementById("dashboardSection");
+//   if (dashboard) dashboard.classList.remove("hidden");
+
+//   // Reset individual dashboard parts to their proper layout
+//   const statsGrid = document.querySelector('.stats-grid');
+//   const chartsGrid = document.querySelector('.charts-grid');
+//   const expiringTable = document.querySelector('.expiring-table');
+
+//   if (statsGrid) statsGrid.style.removeProperty('display');     // use flex to match CSS
+//   if (chartsGrid) chartsGrid.style.removeProperty('display');
+//   if (expiringTable) expiringTable.style.removeProperty('display');
+// }

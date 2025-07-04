@@ -95,7 +95,7 @@ function populateExpiringTable(data) {
     tr.innerHTML = `
       <td>${d.clientname || ''}</td>
       <td>${formattedDate}</td>
-      <td>${d.status || ''}</td>
+      <td>${d.handledby || ''}</td>
     `;
     tbody.appendChild(tr);
   });
