@@ -1,4 +1,4 @@
-function renderAppForm(mode, client = {}) {
+async function renderAppForm(mode, client = {}) {
   const container = document.getElementById('formContainer');
   const tableWrapper = document.querySelector('.table-wrapper');
   if (tableWrapper) tableWrapper.style.display = 'none';
@@ -35,7 +35,12 @@ function renderAppForm(mode, client = {}) {
   document.getElementById('appstatus').value = client.appstatus || '';
   document.getElementById('remarks').value = client.remarks || '';
 
-  document.getElementById('clientForm').addEventListener('submit', async function (e) {
+  // Fix: Prevent multiple submit event listeners
+  const oldForm = document.getElementById('clientForm');
+  const newForm = oldForm.cloneNode(true);
+  oldForm.parentNode.replaceChild(newForm, oldForm);
+
+  newForm.addEventListener('submit', async function (e) {
     e.preventDefault();
     const formData = new FormData(e.target);
     const formValues = Object.fromEntries(formData.entries());
@@ -92,6 +97,7 @@ function renderAppForm(mode, client = {}) {
     }
   });
 }
+
 
 // Utility Functions
 function addApp() {

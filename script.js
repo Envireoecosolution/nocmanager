@@ -27,6 +27,49 @@ function formatDaysRemaining(nocexpirydate) {
   return formattedDate + suffix;
 }
 
+// Define this near the top or before you assign the button click handler
+function searchClients() {
+  document.getElementById('formContainer').style.display = 'none';
+
+  const dashboard = document.getElementById("dashboardSection");
+  if (dashboard) dashboard.classList.add("hidden");
+
+  const statsGrid = document.querySelector('.stats-grid');
+  const chartsGrid = document.querySelector('.charts-grid');
+  const expiringTable = document.querySelector('.expiring-table');
+
+  if (statsGrid) statsGrid.style.display = 'none';
+  if (chartsGrid) chartsGrid.style.display = 'none';
+  if (expiringTable) expiringTable.style.display = 'none';
+
+  const query = document.getElementById('searchBar')?.value.trim().toLowerCase() || '';
+  if (!query) return getData();
+
+  supabase.from('Appdata').select('*').then(({ data, error }) => {
+    if (error) return console.error('Search Error:', error);
+
+    const filtered = data.filter(client =>
+      (client.appno?.toString().toLowerCase().includes(query)) ||
+      (client.clientname?.toLowerCase().includes(query))
+    );
+
+    populateTable(filtered);
+    document.querySelector('.table-wrapper').style.display = filtered.length ? 'block' : 'none';
+    toggleExcelButton(filtered.length > 0);
+    if (!filtered.length) alert("No matching records found.");
+  });
+}
+
+
+
+
+// Search triggers
+document.getElementById('searchButton')?.addEventListener('click', searchClients);
+document.getElementById('searchBar')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') searchClients();
+});
+
+
 function renderTableRow(client, showPen = false) {
   const formattedNocDate = formatDateToDDMMYYYY(client.nocdate);
   const expiryDisplay = formatDaysRemaining(client.nocexpirydate);
