@@ -10,10 +10,11 @@
   <title>NOC management</title>
   <link rel="icon" href="fav.png" type="image/png" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@1&family=Playpen+Sans+Hebrew:wght@100..800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
-
-
 <body>
   <nav class="navbar">
     <div class="navbar-left">
@@ -27,70 +28,43 @@
     </div>
 
     <div class="navbar-right">
-      <!-- <a href="#" onclick="goHome()">Home</a> -->
+      <a href="#" onclick="goHome()">Home</a>
       <a href="#" onclick="showLoginForm()">Login</a>
       <a href="#" onclick="payments()">Payment <br>Tracker</a>
-      <a href="#" onclick="filterOngoing()">Ongoing <br>NOCs</a>
-      <a href="#" onclick="filterExpiring()">Expiring in <br>90 Days</a>
-      <a href="#" onclick="addApp()">Add New <br>Application</a>
-
-      <div id="authContainer" style="display:none;">
-      <h2 id="authTitle">Login</h2>
-      <form id="authForm">
-      <label>Email: <input type="email" name="email" required /></label><br>
-      <label>Password: <input type="password" name="password" required /></label><br>
-      <button type="submit">Login</button>
-      </form>
-      <p id="toggleLink" style="cursor:pointer; color:blue;">New user? Sign up here</p>
-        <button onclick="logoutUser()">Logout</button>
-    </div>
+      <!-- <a href="#" onclick="filterOngoing()">Ongoing <br>NOCs</a>
+      <a href="#" onclick="filterExpiring()">Expiring in <br>90 Days</a> -->
+      <a href="#" id="addAppBtn">Add New <br>Application</a>
 
     </div>
   </nav>
 
-    <div class="main">
-    <div id="quoteButtonContainer" style="display: flex; justify-content: space-between; align-items: center; margin: 0px 0px;">
+ <div class="filter-and-main">
+  <div id="filterPanel" class="filter-panel"></div>
+  <div class="main-panel">
 
-</div>
 
+  <div id="dashboardSection" style="flex-grow: 1;">
+    <div class="dashboard-container">
 
-  <!-- dashboard -->
+      <div class="stats-grid">
+        <div class="stat-card"><h3>Total Applications</h3><p id="totalApps">0</p></div>
+        <div class="stat-card"><h3>Closed</h3><p id="closedApps">0</p></div>
+        <div class="stat-card"><h3>In Progress</h3><p id="inProgressApps">0</p></div>
+        <div class="stat-card"><h3>Expiring Soon</h3><p id="expiringApps">0</p></div>
+      </div>
 
-  <div id="dashboardSection">
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h4>Application Status</h4>
+          <canvas id="statusPieChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h4>Applications by Month</h4>
+          <canvas id="monthlyBarChart"></canvas>
+        </div>
+      </div>
 
-<div class="dashboard-container">
-
-  <div class="stats-grid">
-    <div class="stat-card"><h3>Total Applications</h3><p id="totalApps">0</p></div>
-    <div class="stat-card"><h3>Closed</h3><p id="closedApps">0</p></div>
-    <div class="stat-card"><h3>In Progress</h3><p id="inProgressApps">0</p></div>
-    <div class="stat-card"><h3>Expiring Soon</h3><p id="expiringApps">0</p></div>
-  </div>
-
-  <div class="charts-grid">
-    <div class="chart-card">
-      <h4>Application Status</h4>
-      <canvas id="statusPieChart"></canvas>
     </div>
-    <div class="chart-card">
-      <h4>Applications by Month</h4>
-      <canvas id="monthlyBarChart"></canvas>
-    </div>
-  </div>
-  </div>
-
-  <div class="expiring-table">
-    <h3>NOCs Expiring in Next 90 Days</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Client</th>
-          <th>Expiry Date</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="expiringTableBody"></tbody>
-    </table>
   </div>
 </div>
 
@@ -107,8 +81,8 @@
           <th>Password</th>
           <th>Handled By</th>
           <th>NOC Date</th>
-          <th>NOC Expiry Date</th>
-          <th>Application Status</th>
+          <th>NOC Expiry <br>Date</th>
+          <th>Application <br>Status</th>
           <th>Remarks</th>
         </tr>
       </thead>
@@ -117,18 +91,114 @@
       </tbody>
     </table>
     </div>
-         <div id="formContainer" style="display: none;" class="form-wrapper"></div>
+         <div id="formContainer" style="display: none;" class="form-wrapper">
+          <div class="dark-form" style="display: none;">
+  <h2 id="formHeading">Add New Application</h2>
+  <form id="clientForm">
+    <label>Application No.:
+      <input class="input-field" type="text" name="appno" id="appno" required>
+    </label>
+    <label>Client Name:
+      <input class="input-field" type="text" name="clientname" id="clientname" autocomplete="on" required>
+    </label>
+    <label>Status:
+      <select class="select-field" name="status" id="status" required>
+        <option value="">-- Select Status --</option>
+        <option value="Merged">Merged</option>
+        <option value="On Hold">On Hold</option>
+        <option value="Closed">Closed</option>
+        <option value="Working">Working</option>
+      </select>
+    </label>
+    <label>Application Type:
+      <select class="select-field" name="apptype" id="apptype" required>
+        <option value="">-- Select Type --</option>
+        <option value="New">New</option>
+        <option value="Renewal">Renewal</option>
+      </select>
+    </label>
+    <label>Login ID:
+      <input class="input-field" type="text" name="loginid" id="loginid" required>
+    </label>
+    <label>Password:
+      <input class="input-field" type="text" name="password" id="password" required>
+    </label>
+    <label>Handled By:
+      <select class="select-field" name="handledby" id="handledby">
+        <option value="">-- Select Handler --</option>
+        <option value="Sachit Aggarwal">Sachit Aggarwal</option>
+        <option value="Tina Jain Aggarwal">Tina Jain Aggarwal</option>
+        <option value="Rajesh Makker">Rajesh Makker</option>
+        <option value="Anchal Aggarwal">Anchal Aggarwal</option>
+        <option value="Garima Sharma">Garima Sharma</option>
+        <option value="Prashant">Prashant</option>
+        <option value="Akshay Kumar">Akshay Kumar</option>
+      </select>
+    </label>
+    <label>NOC Date:
+      <input class="input-field" type="date" name="nocdate" id="nocdate">
+    </label>
+    <label>NOC Expiry Date:
+      <input class="input-field" type="date" name="nocexpirydate" id="nocexpirydate">
+    </label>
+    <label>Application Status:
+      <select class="select-field" name="appstatus" id="appstatus">
+        <option value="">-- Select Application Status --</option>
+        <!-- [Keep all the options same as your original JS list] -->
+        <option value="Application Submitted fees not paid">Application Submitted fees not paid</option>
+        <option value="Application Submitted fees paid">Application Submitted fees paid</option>
+        <option value="Approval Pending for payment of Tariff">Approval Pending for payment of Tariff</option>
+        <option value="Marked to Applicant to upload signed Application">Marked to Applicant to upload signed Application</option>
+        <option value="Permission Certificate Issued">Permission Certificate Issued</option>
+        <option value="Observation raised by Authority">Observation raised by Authority</option>
+        <option value="Observation raised by CTO to Applicant">Observation raised by CTO to Applicant</option>
+        <option value="Recommended to Authority">Recommended to Authority</option>
+        <option value="Recommended to Technical Committee">Recommended to Technical Committee</option>
+        <option value="Rejected by Authority">Rejected by Authority</option>
+        <option value="Approval pending subject to removal of condition decided by Authority">Approval pending subject to removal of condition decided by Authority</option>
+        <option value="Reply to Observation Submitted">Reply to Observation Submitted</option>
+        
+        <option value="Return with Approved by Competent Authority">Return with Approved by Competent Authority</option>
+        <option value="Return with Approve by Competent Authority with Condition">Return with Approve by Competent Authority with Condition</option>
+        
+        <option value="Returned with Observation by Competent Authority for reviewed.">Returned with Observation by Competent Authority for reviewed.</option>
+        <option value="Signed Application Uploaded by Applicant">Signed Application Uploaded by Applicant</option>
+        <option value="Under Observation">Under Observation</option>
+      </select>
+    </label>
+    <div class="form-row">
+      <label>Remarks:</label>
+      <textarea name="remarks" id="remarks" rows="4"></textarea>
+    </div>
+    <button type="submit" id="formSubmitBtn">Submit</button>
+  </form>
+</div>
+  </div>
   </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@1"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1"></script>
-<script src="script.js"></script>
-<script src="form.js"></script>
-<script src="dashboard.js"></script>
-<script src="script.js"></script>
+
+  <div id="authContainer" style="display:none;">
+      <h2 id="authTitle">Login</h2>
+      <form id="authForm">
+      <label>Email: <input type="email" name="email" required /></label><br>
+      <label>Password: <input type="password" name="password" required /></label><br>
+      <button type="submit">Login</button>
+      </form>
+      <p id="toggleLink" style="cursor:pointer; color:blue;">New user? Sign up here</p>
+        <button onclick="logoutUser()">Logout</button>
+    </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1"></script>
+  
+  <script src="form.js"></script>
+  <script src="script.js"></script>
+  <script src="dashboard.js"></script>
+  
+  <script src="filters.js"></script>
 </body>
 </html>

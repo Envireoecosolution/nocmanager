@@ -1,6 +1,3 @@
-
-// dashboard.js - requires Chart.js and your existing Supabase client
-
 document.addEventListener('DOMContentLoaded', async () => {
   const { data, error } = await supabase.from('Appdata').select('*');
   if (error) return console.error('Error loading dashboard data:', error);
@@ -12,8 +9,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const next90 = new Date(today);
   next90.setDate(today.getDate() + 90);
   const expiring = data.filter(d => {
-    const exp = new Date(d.nocexpirydate);
-    return exp >= today && exp <= next90;
+  const exp = new Date(d.nocexpirydate);
+  return exp >= today && exp <= next90;
   }).length;
 
   animateCount('totalApps', total);
@@ -23,7 +20,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   renderStatusPieChart(closed, working, total - closed - working);
   renderMonthlyBarChart(data);
-  populateExpiringTable(data);
 });
 
 function animateCount(id, target) {
@@ -41,7 +37,7 @@ function animateCount(id, target) {
   }, 30);
 }
 
-// Removed incomplete Chart initialization. Use renderStatusPieChart or other chart functions as needed.
+// Removed incomplete Chart initialization. Use renderStatusPieChart or other functions as needed.
 
 function renderStatusPieChart(closed, working, others) {
   new Chart(document.getElementById('statusPieChart'), {
@@ -74,30 +70,6 @@ function renderMonthlyBarChart(data) {
         backgroundColor: '#007bff'
       }]
     }
-  });
-}
-
-function populateExpiringTable(data) {
-  const tbody = document.getElementById('expiringTableBody');
-  const today = new Date();
-  const next90 = new Date();
-  next90.setDate(today.getDate() + 90);
-
-  const expiring = data.filter(d => {
-    const exp = new Date(d.nocexpirydate);
-    return exp >= today && exp <= next90;
-  });
-
-  tbody.innerHTML = '';
-  expiring.forEach(d => {
-    const tr = document.createElement('tr');
-    const formattedDate = formatDateToDDMMYYYY(d.nocexpirydate);
-    tr.innerHTML = `
-      <td>${d.clientname || ''}</td>
-      <td>${formattedDate}</td>
-      <td>${d.handledby || ''}</td>
-    `;
-    tbody.appendChild(tr);
   });
 }
 

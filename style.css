@@ -1,20 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital@1&family=Edu+QLD+Beginner:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital@1&family=Playpen+Sans+Hebrew:wght@100..800&display=swap');
+
+
 *{
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: 'Crimson Text', 'Edu QLD Beginner', 'Playpen Sans Hebrew', Helvetica, Arial, sans-serif;
+      font-weight: 700;
       margin: 0;
       padding: 0;
       /* background-color: #555; */
       background-size: cover;
       color: black;
     }
+
 .navbar {
-  background-color: #f8f9fa;
-  min-height: 60px;
+  min-height: 30px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
+  padding: 10px 10px;
   border-bottom: 1px solid;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .navbar-left {
@@ -174,8 +178,7 @@ th:nth-child(9), td:nth-child(9) { /* NOC Expiry Date */
 }
 
 .dark-form {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background: #1e1e1e;
+  /* background: rgb(159, 217, 200); */
   color: #fff;
   padding: 2rem;
   border-radius: 12px;
@@ -189,7 +192,7 @@ th:nth-child(9), td:nth-child(9) { /* NOC Expiry Date */
   text-align: center;
   margin-bottom: 1.5rem;
   font-size: 1.5rem;
-  color: #ffffff;
+  color: #000;
 }
 
 .dark-form form {
@@ -198,57 +201,67 @@ th:nth-child(9), td:nth-child(9) { /* NOC Expiry Date */
   gap: 1.5rem;
 }
 
+/* Labels remain unchanged */
 .dark-form label {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #ffffff;
+  color: #000;
   flex: 1 1 45%;
   display: flex;
   flex-direction: column;
   font-weight: 500;
 }
 
-/* Inputs stay consistent */
-.dark-form input {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
+/* ✅ Unified dark style for inputs, selects, textareas */
+.dark-form input[type="text"],
+.dark-form input[type="email"],
+.dark-form input[type="password"],
+.dark-form input[type="date"],
+.dark-form select,
+.dark-form textarea {
   margin-top: 0.3rem;
-  padding: 0.5rem 0.8rem;
+  padding: 0.6rem;
   border: 1px solid #444;
   border-radius: 6px;
-  background-color: #2a2a2a;
+  background-color: rgb(53, 53, 53);
   color: #fff;
+  font-weight: 600;
+  font-family: inherit;
 }
 
+/* ✅ Placeholder style */
+.dark-form input::placeholder,
+.dark-form textarea::placeholder {
+  color: #ccc;
+}
+
+/* ✅ Focus effect for better UX */
+.dark-form input:focus,
+.dark-form select:focus,
+.dark-form textarea:focus {
+  outline: none;
+  border-color: #00bfff;
+  box-shadow: 0 0 5px #00bfff;
+}
+
+/* ✅ Calendar icon styling */
 .dark-form input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1); /* Makes the black calendar icon white */
+  filter: invert(1);
   cursor: pointer;
 }
 
-
-/* Remarks section takes full width */
+/* ✅ Remarks section spans full width */
 .dark-form .form-row {
   flex: 1 1 100%;
   display: flex;
   flex-direction: column;
 }
 
-.dark-form textarea {
-  margin-top: 0.3rem;
-  width: 95%;
-  padding: 0.6rem;
-  border: 1px solid #444;
-  border-radius: 6px;
-  background-color: #2a2a2a;
-  color: #fff;
-  resize: vertical;
-  min-height: 150px; /* increased height */
-}
 
 /* Submit button on full row */
 .dark-form button {
   flex: 1 1 100%;
   margin-top: 1rem;
   padding: 0.8rem 1.2rem;
-  background-color: #28a745;
+  background-color: #4ea8ff;
   color: white;
   border: none;
   border-radius: 6px;
@@ -259,13 +272,12 @@ th:nth-child(9), td:nth-child(9) { /* NOC Expiry Date */
 }
 
 .dark-form button:hover {
-  background-color: #218838;
+  background-color: #4ea8ff;
 }
 
 
 
 .login-form {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   background: #1e1e1e;
   color: white;
   padding: 2rem 2.5rem;
@@ -277,7 +289,6 @@ th:nth-child(9), td:nth-child(9) { /* NOC Expiry Date */
 
 .login-form h2 {
   color:white;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   text-align: center;
   font-size: 1.8rem;
   margin-bottom: 1.5rem;
@@ -295,18 +306,18 @@ th:nth-child(9), td:nth-child(9) { /* NOC Expiry Date */
 .login-form input[type="password"] {
   width: 100%;
   padding: 0.6rem 0.8rem;
-  border: 1px solid #444;
+  border: 1px solid rgb(53, 53, 53);
   border-radius: 6px;
-  background-color: #2a2a2a;
+  background-color: rgb(53, 53, 53);
   color: #fff;
   font-size: 0.95rem;
-   margin-bottom: 12px;
+  margin-bottom: 12px;
 }
 
 .login-form button {
   width: 100%;
   padding: 0.6rem 0.8rem;
-  background-color: #28a745;
+  background-color: #4ea8ff;
   color: white;
   border: none;
   border-radius: 6px;
@@ -343,18 +354,8 @@ th:nth-child(9), td:nth-child(9) { /* NOC Expiry Date */
 
 
 
-.water-quote {
-  text-align: center;
-  font-size: 18px;
-  font-style: italic;
-  color: #000;
-  margin-bottom: 20px;
-}
-
-
 .dashboard-container {
   padding: 0px;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 #dashboardSection {
@@ -369,27 +370,24 @@ th:nth-child(9), td:nth-child(9) { /* NOC Expiry Date */
 }
 
 
-
 .stats-grid {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 12px;
+  gap: 46px;
   margin-bottom: 2px;
 }
 
 .stat-card {
-  background: #e6f0ff;
-  border-left: 4px solid #007bff;
-  border-radius: 6px;
-  padding: 2px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  width: 200px; /* 👈 Fixed width */
-  max-width: 200px;
-  min-width: 120px;
-  margin: 20px;
+ background: #e6f0ff;
+    border-radius: 6px;
+    padding: 2px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 170px;
+    max-width: 170px;
+    margin: 5px;
 }
 
 .stat-card h3 {
@@ -424,11 +422,11 @@ th:nth-child(9), td:nth-child(9) { /* NOC Expiry Date */
 
 
 .chart-card {
-  background: #f9f9f9;
+  background: #e6f0ff;
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   padding: 10px;
-  width: 400px;
+  width: 345px;
   text-align: center;
 }
 
@@ -480,5 +478,93 @@ th:nth-child(9), td:nth-child(9) { /* NOC Expiry Date */
 .expiring-table tbody tr:hover {
   background-color: #f1f1f1;
 }
+
+
+.filter-panel {
+  width: 200px;
+  padding: 15px;
+  border-right: 1px solid #ccc;
+  min-height: 100vh; /* ensure it stretches full height */
+  box-sizing: border-box;
+}
+
+.filter-and-main {
+  display: flex;
+  align-items: flex-start;
+}
+
+.main {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.filter-and-main {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.main-panel {
+  flex-grow: 1;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+
+/* Unified input/select styling */
+.dark-form input,
+.dark-form select,
+.dark-form textarea {
+  background-color: rgb(53, 53, 53);
+  color: white;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.95rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Select dropdown options */
+.dark-form select option {
+  background-color: rgb(53, 53, 53);
+  color: white;
+}
+
+/* Remove duplicate inline styles from select options in JS */
+.dark-form label {
+  flex: 1 1 45%;
+}
+
+/* To fix long dropdown stretching */
+.dark-form select[name="appstatus"] {
+  font-size: 13px;
+}
+
+/* Keep labels aligned */
+.dark-form label > input,
+.dark-form label > select,
+.dark-form label > textarea {
+  margin-top: 0.3rem;
+}
+
+#filterPanel {
+  transition: all 0.3s ease;
+}
+
+
+.filter-title {
+  font-size: 1.1rem; /* Slightly bigger than normal text */
+  font-weight: 600;
+  margin-bottom: 6px; /* Gap between heading and checkboxes */
+}
+
+.filter-group {
+  margin-bottom: 12px; /* Space between groups */
+}
+
+
+
+
 
 /* Scale table down to always fit screen width */

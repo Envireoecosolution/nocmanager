@@ -1,9 +1,10 @@
+
 // Supabase configuration via CDN
 const supabaseUrl = 'https://uewuhdigjdrbfcuasibe.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VoZGlnamRyYmZjdWFzaWJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTEzMTAsImV4cCI6MjA2NTEyNzMxMH0.yTTRgpMlumq5gyblYxfqfIvJDsmn0THY6rj1pflUQ-k';
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-// ========== Utility Functions ==========
+let allClients = [];
 
 // Format YYYY-MM-DD to DD-MM-YYYY
 function formatDateToDDMMYYYY(dateString) {
@@ -16,31 +17,19 @@ function formatDateToDDMMYYYY(dateString) {
 function formatDaysRemaining(nocexpirydate) {
   const formattedDate = formatDateToDDMMYYYY(nocexpirydate);
   if (!nocexpirydate) return "";
-
   const expiry = new Date(nocexpirydate);
   const today = new Date();
   const timeDiff = expiry - today;
   const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-
   if (daysRemaining > 90 || daysRemaining < 0) return formattedDate;
-
   const color = daysRemaining <= 15 ? 'red' : 'inherit';
   const suffix = `<br><span style="color:${color};">(${daysRemaining} days left)</span>`;
-
   return formattedDate + suffix;
 }
 
-// Show/hide download button
-function toggleExcelButton(show) {
-  const btn = document.getElementById('excelDownloadBtn');
-  if (btn) btn.style.display = show ? 'inline-block' : 'none';
-}
-
-// Render a single row of client data
 function renderTableRow(client, showPen = false) {
   const formattedNocDate = formatDateToDDMMYYYY(client.nocdate);
   const expiryDisplay = formatDaysRemaining(client.nocexpirydate);
-
   return `
     <tr>
       <td>${client.appno || ''}</td>
@@ -54,244 +43,130 @@ function renderTableRow(client, showPen = false) {
       <td>${expiryDisplay || ''}</td>
       <td>${client.appstatus || ''}</td>
       <td>${client.remarks || ''}
-      ${showPen ? `<span class="edit-icon" style="cursor:pointer;" title="Edit" data-appno="${client.appno}"> ✏️</span>` : ''}
+        ${showPen ? `<span class="edit-icon" style="cursor:pointer;" title="Edit" data-appno="${client.appno}"> ✏️</span>` : ''}
       </td>
     </tr>
   `;
 }
 
-// Populate table from data array
 function populateTable(data) {
   const tableBody = document.getElementById('clientTable') || document.getElementById('table-body');
   if (!tableBody) return;
   tableBody.innerHTML = '';
-
-  data.forEach(client => {
-    const showPen =true; // Show edit icon for all rows
+  const showPen = true; // Set to true to show edit icons
+      data.forEach(client => {
     tableBody.innerHTML += renderTableRow(client, showPen);
   });
 
-  document.querySelectorAll('.edit-icon').forEach(icon => {
-    icon.addEventListener('click', (e) => {
-      const appno = e.target.getAttribute('data-appno');
-      addApp(appno);
-    });
+  document.addEventListener('click', function (e) {
+    if (e.target && e.target.classList.contains('edit-icon')) {
+      const appno = e.target.dataset.appno;
+      if (appno) updateApp({ appno });
+      else alert('Missing app number.');
+    }
   });
-
-  toggleExcelButton(true); // Show button when table is populated
 }
 
-// ========== Main Functional Code ==========
+async function updateApp({ appno }) {
+  try {
+    const { data: record, error } = await supabase
+      .from('Appdata')
+      .select('*')
+      .eq('appno', appno)
+      .single();
+
+    if (error || !record) {
+      throw new Error('Could not fetch application data.');
+    }
+
+    renderAppForm('update', record); // ✅ this will now prefill correctly
+  } catch (err) {
+    console.error('Error in updateApp:', err.message);
+    alert('Failed to load the application for update.');
+  }
+}
+
 
 async function getData() {
   const { data, error } = await supabase.from('Appdata').select('*');
   if (error) return console.error("Error fetching data:", error);
+  allClients = data;
   populateTable(data);
+  renderFilterPanel();
+
+  const total = data.length;
+  const closed = data.filter(c => c.status?.toLowerCase() === 'closed').length;
+  const inProgress = data.filter(c => c.status?.toLowerCase() === 'working').length;
+  const expiringSoon = data.filter(c => {
+    const expiry = new Date(c.nocexpirydate);
+    const today = new Date();
+    const daysLeft = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+    return daysLeft <= 90 && daysLeft >= 0;
+  }).length;
+
+  ["totalApps", "closedApps", "inProgressApps", "expiringApps"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = 0;
+  });
+
+  setTimeout(() => {
+    animateCount("totalApps", total);
+    animateCount("closedApps", closed);
+    animateCount("inProgressApps", inProgress);
+    animateCount("expiringApps", expiringSoon);
+  }, 10);
 }
 
-function searchClients() {
+function animateCount(id, target) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let count = 0;
+  const increment = target / 40;
+  const interval = setInterval(() => {
+    count += increment;
+    if (count >= target) {
+      count = target;
+      clearInterval(interval);
+    }
+    el.textContent = Math.floor(count);
+  }, 15);
+}
 
-  // Hide form and table when searching
-  document.getElementById('formContainer').style.display = 'none';
-
-// Hide dashboard when any navbar item except companyName is clicked
+function goHome() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (document.activeElement) document.activeElement.blur();
+  [
+    '#formContainer', '.table-wrapper', '#applicationSection', '.modal', '.toast',
+    '#searchSection', '.login-form', '.filter-results', '.main-panel table'
+  ].forEach(selector => {
+    const el = document.querySelector(selector);
+    if (el) el.style.display = 'none';
+  });
+  const checkboxes = document.querySelectorAll('#filterPanel input[type="checkbox"]');
+  checkboxes.forEach(cb => cb.checked = false);
+  if (typeof filters !== 'undefined') {
+    filters.status = [];
+    filters.handledBy = [];
+    filters.expiry = [];
+  }
   const dashboard = document.getElementById("dashboardSection");
-  if (dashboard) dashboard.classList.add("hidden");
-  const statsGrid = document.querySelector('.stats-grid');
-  const chartsGrid = document.querySelector('.charts-grid');
-  const expiringTable = document.querySelector('.expiring-table');
-  if (statsGrid) statsGrid.style.display = 'none';
-  if (chartsGrid) chartsGrid.style.display = 'none';
-  if (expiringTable) expiringTable.style.display = 'none';
-
-  const query = document.getElementById('searchBar')?.value.trim().toLowerCase() || '';
-  if (!query) return getData();
-
-  supabase.from('Appdata').select('*').then(({ data, error }) => {
-    if (error) return console.error('Search Error:', error);
-
-    const filtered = data.filter(client =>
-      (client.appno?.toString().toLowerCase().includes(query)) ||
-      (client.clientname?.toLowerCase().includes(query))
-    );
-
-    populateTable(filtered);
-    document.querySelector('.table-wrapper').style.display = filtered.length ? 'block' : 'none';
-    toggleExcelButton(filtered.length > 0);
-    if (!filtered.length) alert("No matching records found.");
+  if (dashboard) {
+    dashboard.classList.remove("hidden");
+    dashboard.style.display = 'block';
+    dashboard.classList.add("fade-in");
+  }
+  ['.stats-grid', '.charts-grid', '.expiring-table'].forEach(sel => {
+    const el = document.querySelector(sel);
+    if (el) el.removeAttribute("style");
   });
+  const filterPanel = document.getElementById("filterPanel");
+  if (filterPanel) filterPanel.style.display = 'block';
+  getData();
 }
 
-function filterOngoing() {
-  document.getElementById('formContainer').style.display = 'none';
-
-  supabase.from('Appdata').select('*').eq('status', 'Working').then(({ data, error }) => {
-    if (error) return console.error('Error fetching ongoing NOCs:', error);
-
-    if (!data.length) {
-      alert('No ongoing NOCs found.');
-      document.querySelector('.table-wrapper').style.display = 'none';
-      toggleExcelButton(false);
-      return;
-    }
-
-    populateTable(data);
-    document.querySelector('.table-wrapper').style.display = 'block';
-  });
-}
-window.filterOngoing = filterOngoing;
-
-function filterExpiring() {
-  document.getElementById('formContainer').style.display = 'none';
-
-  const today = new Date();
-  const ninetyDaysLater = new Date();
-  ninetyDaysLater.setDate(today.getDate() + 90);
-
-  supabase.from('Appdata').select('*').then(({ data, error }) => {
-    if (error) return console.error('Error fetching data:', error);
-
-    const filtered = data.filter(client => {
-      const expiryDate = new Date(client.nocexpirydate);
-      return expiryDate >= today && expiryDate <= ninetyDaysLater;
-    });
-
-    if (!filtered.length) {
-      alert("No NOCs found expiring in the next 90 days.");
-      document.querySelector('.table-wrapper').style.display = 'none';
-      toggleExcelButton(false);
-      return;
-    }
-
-    populateTable(filtered);
-    document.querySelector('.table-wrapper').style.display = 'block';
-  });
-}
-window.filterExpiring = filterExpiring;
-
-// Hide dashboard when any navbar item except companyName is clicked
-window.addEventListener('DOMContentLoaded', () => {
-  ['filterOngoing', 'filterExpiring', 'addApp', 'showLoginForm'].forEach(fnName => {
-    const originalFn = window[fnName];
-    if (typeof originalFn === 'function') {
-      window[fnName] = function (...args) {
-        const dashboard = document.getElementById("dashboardSection");
-        if (dashboard) dashboard.classList.add("hidden");
-        originalFn(...args); // Call the original function
-      };
-    }
-  });
-});
+document.addEventListener('DOMContentLoaded', getData);
+document.getElementById('companyName').addEventListener('click', goHome);
 
 
-// Initialize the dashboard on page load
-document.querySelectorAll('.navbar *').forEach(elem => {
-  elem.addEventListener('click', () => {
-    const statsGrid = document.querySelector('.stats-grid');
-    const chartsGrid = document.querySelector('.charts-grid');
-    const expiringTable = document.querySelector('.expiring-table');
-    if (statsGrid) statsGrid.style.display = 'grid';
-    if (chartsGrid) chartsGrid.style.display = 'flex';
-    if (expiringTable) expiringTable.style.display = 'block';
-  });
-});
+window.updateApp = updateApp;
 
-
-// Search triggers
-document.getElementById('searchButton')?.addEventListener('click', searchClients);
-document.getElementById('searchBar')?.addEventListener('keydown', e => {
-  if (e.key === 'Enter') searchClients();
-});
-
-// Water quote + button setup
-// Excel Download Button Setup
-document.addEventListener('DOMContentLoaded', () => {
-  const quoteContainer = document.getElementById('quoteButtonContainer');
-  const existingBtn = document.getElementById('excelDownloadBtn');
-  if (!quoteContainer || existingBtn) return;
-
-  const btn = document.createElement('button');
-  btn.id = 'excelDownloadBtn';
-  btn.textContent = 'Download as Excel';
-  btn.style.cssText = `
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 8px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    display: none;
-    float: left;
-    margin-right: auto;
-  `;
-  btn.onmouseover = () => btn.style.backgroundColor = "#0056b3";
-  btn.onmouseout = () => btn.style.backgroundColor = "#007bff";
-
-  btn.onclick = function () {
-    const table = document.querySelector('.table-wrapper table');
-    if (!table) return alert("No table found!");
-    const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
-    XLSX.writeFile(wb, 'noc_data.xlsx');
-  };
-  quoteContainer.appendChild(btn);
-  toggleExcelButton(false); // Initially hidden
-});
-
-// Hide form & table when company name is clicked (like reset) & display dashboard
-document.getElementById('companyName').addEventListener('click', () => {
-  const formContainer = document.getElementById('formContainer');
-  if (formContainer) formContainer.style.display = 'none';
-
-  const tableWrapper = document.querySelector('.table-wrapper');
-  if (tableWrapper) tableWrapper.style.display = 'none';
-
-  const searchInput = document.querySelector('input[type="search"], input[name="search"]');
-  if (searchInput) searchInput.value = '';
-
-  toggleExcelButton(false); // Hide download button
-
-
-   const dashboard = document.getElementById("dashboardSection");
-  if (dashboard) dashboard.classList.remove("hidden");
-
-  // Show dashboard sections
-    const statsGrid = document.querySelector('.stats-grid');
-    const chartsGrid = document.querySelector('.charts-grid');
-    const expiringTable = document.querySelector('.expiring-table');
-    if (statsGrid) statsGrid.style.display = 'flex';
-    if (chartsGrid) chartsGrid.style.display = 'flex';
-    if (expiringTable) expiringTable.style.display = 'block';
-});
-
-
-function payments() {
-  
-}
-
-// function goHome() {
-//   // Hide form and table
-//   const formContainer = document.getElementById('formContainer');
-//   if (formContainer) formContainer.style.display = 'none';
-
-//   const tableWrapper = document.querySelector('.table-wrapper');
-//   if (tableWrapper) tableWrapper.style.display = 'none';
-
-//   // Hide Excel download button
-//   toggleExcelButton(false);
-
-//   // Show dashboard container
-//   const dashboard = document.getElementById("dashboardSection");
-//   if (dashboard) dashboard.classList.remove("hidden");
-
-//   // Reset individual dashboard parts to their proper layout
-//   const statsGrid = document.querySelector('.stats-grid');
-//   const chartsGrid = document.querySelector('.charts-grid');
-//   const expiringTable = document.querySelector('.expiring-table');
-
-//   if (statsGrid) statsGrid.style.removeProperty('display');     // use flex to match CSS
-//   if (chartsGrid) chartsGrid.style.removeProperty('display');
-//   if (expiringTable) expiringTable.style.removeProperty('display');
-// }
