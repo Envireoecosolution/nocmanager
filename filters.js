@@ -18,14 +18,18 @@ function renderFilterPanel() {
   if (!panel) return;
 
   panel.innerHTML = `
-    <h3>Status</h3>
+  <h1><u>Filters</u></h1><br>
+
+   <h3><strong><u>Status</u></strong></h3>
     ${renderCheckboxGroup('status', statusOptions)}
 
-    <h3>Handled By</h3>
+    <br> <h3><strong><u>Handled By</u></strong></h3>
     ${renderCheckboxGroup('handledBy', handledByOptions)}
 
-    <h3>Expiry</h3>
+    <br> <h3><strong><u>Expiry</u></strong></h3>
     ${renderCheckboxGroup('expiry', expiryOptions, true)}
+
+    <br><button id="resetFilters" class="btn btn-secondary">Reset Filters</button>
   `;
 
   // Attach listeners after injecting
@@ -110,6 +114,33 @@ if (!isAnyFilterActive) {
 
   populateTable(filtered);
 }
+
+
+document.getElementById('resetFilters').addEventListener('click', () => {
+  // 1. Uncheck all checkboxes inside the filter panel
+  const checkboxes = document.querySelectorAll('#filterPanel input[type="checkbox"]');
+  checkboxes.forEach(checkbox => {
+    checkbox.checked = false;
+  });
+
+  // 2. Clear the filters object (assuming this is your structure)
+  filters.handledBy = [];
+  filters.status = [];
+  filters.expiry = [];
+
+  // 3. Show the dashboard and hide the table
+  const dashboard = document.getElementById("dashboardSection");
+  const tableWrapper = document.querySelector(".table-wrapper");
+  const formContainer = document.getElementById("formContainer");
+
+  if (dashboard) dashboard.classList.remove("hidden");
+  if (tableWrapper) tableWrapper.style.display = "none";
+  if (formContainer) formContainer.style.display = "none";
+
+  // 4. Optional: Re-render table with all data (if needed)
+  // populateTable(allClients); // <- use this only if required
+});
+
 
 
 document.addEventListener('DOMContentLoaded', renderFilterPanel);

@@ -211,5 +211,4 @@ document.addEventListener('DOMContentLoaded', getData);
 document.getElementById('companyName').addEventListener('click', goHome);
 
 
-window.updateApp = updateApp;
 
