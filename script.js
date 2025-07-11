@@ -55,7 +55,6 @@ function searchClients() {
 
     populateTable(filtered);
     document.querySelector('.table-wrapper').style.display = filtered.length ? 'block' : 'none';
-    toggleExcelButton(filtered.length > 0);
     if (!filtered.length) alert("No matching records found.");
   });
 }
@@ -207,8 +206,14 @@ function goHome() {
   getData();
 }
 
+
+
+
 document.addEventListener('DOMContentLoaded', getData);
 document.getElementById('companyName').addEventListener('click', goHome);
+
+window.updateApp = updateApp;
+
 
 
 

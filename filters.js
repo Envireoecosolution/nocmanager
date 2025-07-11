@@ -5,31 +5,30 @@ const filters = {
   expiry: []
 };
 
-const handledByOptions = [
-  "Sachit Aggarwal", "Tina Jain Aggarwal", "Rajesh Makker",
-  "Anchal Aggarwal", "Garima Singh", "Prashant", "Akshay Kumar"
-];
+// const handledByOptions = [
+//   "Sachit Aggarwal", "Tina Jain Aggarwal", "Rajesh Makker",
+//   "Anchal Aggarwal", "Garima Singh", "Prashant", "Akshay Kumar"
+// ];
 
-const statusOptions = ["Working", "On hold", "Closed", "Merged"];
-const expiryOptions = ["30", "90"];
+// const statusOptions = ["Working", "On hold", "Closed", "Merged"];
+// const expiryOptions = ["30", "90"];
 
 function renderFilterPanel() {
   const panel = document.getElementById('filterPanel');
   if (!panel) return;
 
   panel.innerHTML = `
-  <h1><u>Filters</u></h1><br>
+  <h1><u>Filters</u> ✨</h1>
 
-   <h3><strong><u>Status</u></strong></h3>
+   <h3><strong><u>Status:</u></strong></h3>
     ${renderCheckboxGroup('status', statusOptions)}
 
-    <br> <h3><strong><u>Handled By</u></strong></h3>
+    <br> <h3><strong><u>Handled By:</u></strong></h3>
     ${renderCheckboxGroup('handledBy', handledByOptions)}
 
-    <br> <h3><strong><u>Expiry</u></strong></h3>
+    <br> <h3><strong><u>Expiry:</u></strong></h3>
     ${renderCheckboxGroup('expiry', expiryOptions, true)}
 
-    <br><button id="resetFilters" class="btn btn-secondary">Reset Filters</button>
   `;
 
   // Attach listeners after injecting
@@ -67,30 +66,38 @@ function handleFilterChange() {
 }
 
 function applyFilters() {
+  // Ensure global filters object exists
+  if (typeof filters === 'undefined') {
+    console.warn("⚠️ 'filters' is not defined.");
+    return;
+  }
+
   const isAnyFilterActive =
-  filters.status.length > 0 ||
-  filters.handledBy.length > 0 ||
-  filters.expiry.length > 0;
+    filters.status.length > 0 ||
+    filters.handledBy.length > 0 ||
+    filters.expiry.length > 0;
 
-const dashboardSection = document.getElementById("dashboardSection");
-const tableWrapperEl = document.querySelector(".table-wrapper");
+  const dashboardSection = document.getElementById("dashboardSection");
+  const tableWrapperEl = document.querySelector(".table-wrapper");
 
-if (!isAnyFilterActive) {
-  if (dashboardSection) dashboardSection.classList.remove("hidden");
-  if (tableWrapperEl) tableWrapperEl.style.display = "none";
-  return; // ✅ Exit early, don’t populate the table
-}
+  if (!isAnyFilterActive) {
+    if (dashboardSection) dashboardSection.classList.remove("hidden");
+    if (tableWrapperEl) tableWrapperEl.style.display = "none";
+    return; // ✅ Exit early — no filters active
+  }
 
   const filtered = allClients.filter(client => {
     const handled = (client.handledby || "").trim().toLowerCase();
     const status = (client.status || "").trim().toLowerCase();
     const expiryDate = client.nocexpirydate ? new Date(client.nocexpirydate) : null;
 
-    const handledMatch = filters.handledBy.length === 0 ||
-      filters.handledBy.map(h => h.toLowerCase()).includes(handled);
+    const handledMatch =
+      filters.handledBy.length === 0 ||
+      filters.handledBy.some(h => handled === h.toLowerCase());
 
-    const statusMatch = filters.status.length === 0 ||
-      filters.status.map(s => s.toLowerCase()).includes(status);
+    const statusMatch =
+      filters.status.length === 0 ||
+      filters.status.some(s => status === s.toLowerCase());
 
     const expiryMatch = (() => {
       if (filters.expiry.length === 0) return true;
@@ -98,49 +105,44 @@ if (!isAnyFilterActive) {
 
       const today = new Date();
       const diffDays = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
-      return filters.expiry.some(days => diffDays >= 0 && diffDays <= parseInt(days));
+
+      return filters.expiry.some(days => {
+        const range = parseInt(days);
+        if (range === 90) return diffDays >= 0 && diffDays <= 90;
+        if (range === 15) return diffDays >= 0 && diffDays <= 15;
+        return false;
+      });
     })();
 
     return handledMatch && statusMatch && expiryMatch;
   });
 
   const tableWrapper = document.querySelector('.table-wrapper');
-  const dashboardSectionEl = document.getElementById('dashboardSection');
   const formContainer = document.getElementById('formContainer');
 
   if (tableWrapper) tableWrapper.style.display = 'block';
-  if (dashboardSectionEl) dashboardSectionEl.style.display = 'none';
+  if (dashboardSection) dashboardSection.style.display = 'none';
   if (formContainer) formContainer.style.display = 'none';
 
   populateTable(filtered);
 }
 
 
-document.getElementById('resetFilters').addEventListener('click', () => {
-  // 1. Uncheck all checkboxes inside the filter panel
-  const checkboxes = document.querySelectorAll('#filterPanel input[type="checkbox"]');
-  checkboxes.forEach(checkbox => {
-    checkbox.checked = false;
+document.querySelectorAll('#filterPanel input[type="checkbox"]').forEach(checkbox => {
+  checkbox.addEventListener('change', function (e) {
+    const { name, value, checked } = e.target;
+
+    if (!filters[name]) filters[name] = [];
+
+    if (checked) {
+      if (!filters[name].includes(value)) filters[name].push(value);
+    } else {
+      filters[name] = filters[name].filter(v => v !== value);
+    }
+
+    applyFilters();
   });
-
-  // 2. Clear the filters object (assuming this is your structure)
-  filters.handledBy = [];
-  filters.status = [];
-  filters.expiry = [];
-
-  // 3. Show the dashboard and hide the table
-  const dashboard = document.getElementById("dashboardSection");
-  const tableWrapper = document.querySelector(".table-wrapper");
-  const formContainer = document.getElementById("formContainer");
-
-  if (dashboard) dashboard.classList.remove("hidden");
-  if (tableWrapper) tableWrapper.style.display = "none";
-  if (formContainer) formContainer.style.display = "none";
-
-  // 4. Optional: Re-render table with all data (if needed)
-  // populateTable(allClients); // <- use this only if required
 });
-
 
 
 document.addEventListener('DOMContentLoaded', renderFilterPanel);

@@ -12,7 +12,7 @@
       background-size: cover;
       color: black;
     }
-
+    
 .navbar {
   min-height: 30px;
   display: flex;
@@ -149,7 +149,7 @@ td {
 }
 
 th {
-  background-color: #cdcdcd;
+  background-color: #becacb78;
   text-align: center;
   border: 1px solid #000;
   margin: 2px;

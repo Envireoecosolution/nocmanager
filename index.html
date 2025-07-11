@@ -26,14 +26,14 @@
     </div>
 
     <div class="navbar-center">
-        <input type="text" id="searchBar" placeholder="Client Name or Application No." />
+        <input type="text" id="searchBar" placeholder="&#x1F50D; Search Client Name or Application No." />
         <button type="button" id="searchButton">Go</button>
     </div>
 
     <div class="navbar-right">
       <a href="#" onclick="goHome()">Home</a>
       <a href="#" onclick="showLoginForm()">Login</a>
-      <a href="#" onclick="payments()">Payment <br>Tracker</a>
+      <a href="#" onclick="payments()">Payment <br> Tracker</a>
       <!-- <a href="#" onclick="filterOngoing()">Ongoing <br>NOCs</a>
       <a href="#" onclick="filterExpiring()">Expiring in <br>90 Days</a> -->
       <a href="#" id="addAppBtn">Add New <br>Application</a>
@@ -50,10 +50,10 @@
     <div class="dashboard-container">
 
       <div class="stats-grid">
-        <div class="stat-card"><h3>Total Applications</h3><p id="totalApps">0</p></div>
-        <div class="stat-card"><h3>Closed</h3><p id="closedApps">0</p></div>
-        <div class="stat-card"><h3>In Progress</h3><p id="inProgressApps">0</p></div>
-        <div class="stat-card"><h3>Expiring Soon</h3><p id="expiringApps">0</p></div>
+        <div class="stat-card"><h3>Total <br>Applications</h3><p id="totalApps">0</p></div>
+        <div class="stat-card"><h3>Closed<br>Applications</h3><p id="closedApps">0</p></div>
+        <div class="stat-card"><h3>Ongoing<br>Applications</h3><p id="inProgressApps">0</p></div>
+        <div class="stat-card"><h3>Applications<br>Expiring Soon</h3><p id="expiringApps">0</p></div>
       </div>
 
       <div class="charts-grid">
@@ -107,10 +107,10 @@
     <label>Status:
       <select class="select-field" name="status" id="status" required>
         <option value="">-- Select Status --</option>
-        <option value="Merged">Merged</option>
+        <!-- <option value="Merged">Merged</option>
         <option value="On Hold">On Hold</option>
         <option value="Closed">Closed</option>
-        <option value="Working">Working</option>
+        <option value="Working">Working</option> -->
       </select>
     </label>
     <label>Application Type:
@@ -160,6 +160,7 @@
         <option value="Rejected by Authority">Rejected by Authority</option>
         <option value="Approval pending subject to removal of condition decided by Authority">Approval pending subject to removal of condition decided by Authority</option>
         <option value="Reply to Observation Submitted">Reply to Observation Submitted</option>
+        <option value="Correction Done for Approval">Correction Done for Approval</option>
         
         <option value="Return with Approved by Competent Authority">Return with Approved by Competent Authority</option>
         <option value="Return with Approve by Competent Authority with Condition">Return with Approve by Competent Authority with Condition</option>
@@ -175,7 +176,7 @@
     </div>
     <button type="submit" id="formSubmitBtn">Submit</button>
   </form>
-</div>
+    </div>
   </div>
   </div>
 
@@ -197,11 +198,9 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@1"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1"></script>
-  
   <script src="form.js"></script>
   <script src="script.js"></script>
   <script src="dashboard.js"></script>
-  
   <script src="filters.js"></script>
 </body>
 </html>
