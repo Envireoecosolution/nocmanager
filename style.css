@@ -2,9 +2,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital@1&family=Playpen+Sans+Hebrew:wght@100..800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Averia+Sans+Libre:ital@1&family=Crimson+Text:ital@1&family=Playpen+Sans+Hebrew:wght@100..800&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
 
+html {
+  font-size: 80%;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 *{
       font-family: 'Playpen Sans Hebrew', Helvetica, Arial, sans-serif;
-      font-weight: 700;
+      font-weight: 500;
       font-style: italic;
       margin: 0;
       padding: 0;
@@ -14,12 +24,13 @@
     }
     
 .navbar {
-  min-height: 30px;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* Left, center (grows), right */
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 10px;
-  border-bottom: 1px solid;
+  gap: 20px;
+  padding: 10px 15px;
+  border-bottom: 1px solid #ccc;
+  min-height: 20px;
 }
 
 .navbar-left {
@@ -38,21 +49,25 @@
   font-weight: 700;
   text-transform: uppercase;
   color: #333;
-  margin: 0;
+  margin: 2px 2px;
   line-height: 1.2;
   word-break: break-word;
+  cursor: pointer;
 }
 
 .navbar-center {
-  flex: 1;
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 10px;
-  padding: 0 10px;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 #searchBar {
-  flex: 1;
+  width: 500px;
+  max-width: 100%;
   padding: 10px 12px;
   font-size: 15px;
   border: 1px solid #ccc;
@@ -60,8 +75,9 @@
   outline: none;
 }
 
+
 #searchButton {
-  padding: 10px 16px;
+  padding: 10px 35px;
   font-size: 15px;
   border: none;
   background-color: #007bff;
@@ -77,11 +93,10 @@
 
 .navbar-right {
   display: flex;
-  gap: 5px 10px;
   flex-wrap: wrap;
-  justify-content:flex-end;
+  justify-content: flex-end;
+  gap: 8px 12px;
   max-width: 100%;
-  overflow: visible;
 }
 
 .navbar-right a {
@@ -92,12 +107,17 @@
   padding: 4px 6px;
   transition: color 0.1s;
   text-align: center;
-  align-items: center;
   line-height: 1.3;
   display: inline-block;
   white-space: normal;
-  /* width: 70px;             Controls how text breaks — adjust as needed */
+  margin-left: 10px;
 }
+
+.navbar-right a:nth-child(1),
+.navbar-right a:nth-child(2) {
+  margin-top: 5px;
+}
+
 
 .navbar-right a::after {
   content: '';
@@ -131,44 +151,61 @@
 
 
 table {
+  
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  background-color: white;
+  border-collapse: collapse;
   font-size: 14px;
-  /* border-radius: 12px; */
-  overflow: hidden;
-}
-
-td {
-  border: 1px solid #000;
-  padding: 2px;
-  padding: 2px;
-  text-align: left;
-  /* vertical-align: top; */
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid #ddd;
 }
 
 th {
-  background-color: #becacb78;
+  background-color: #f8f9fa;
   text-align: center;
-  border: 1px solid #000;
-  margin: 2px;
-  padding: 5px;
+  font-weight: bold;
+  border: 1px solid #dee2e6;
+  padding: 10px;
+  white-space: nowrap;
 }
 
+td {
+  border: 1px solid #dee2e6;
+  padding: 10px;
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+td a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+td a:hover {
+  text-decoration: underline;
+}
 
 .table-wrapper {
   width: 100%;
   overflow-x: auto;
-  overflow-y: visible;
-  transform-origin: top left;
+  background-color: #ffffff;
+  border-radius: 6px;
+  margin-top: 10px;
+  padding: 5px;
 }
 
-table {
+table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+
+/* table {
   width:fit-content; ;
   border-collapse: collapse;
   font-size: 16px;
-}
+} */
 
 
 /* Prevent wrapping for date columns */
@@ -177,6 +214,20 @@ th:nth-child(9), td:nth-child(9) { /* NOC Expiry Date */
   white-space: nowrap;
   width: 110px; /* or adjust as needed */
 }
+
+
+/* Enable text wrapping ONLY in the Remarks column */
+td:last-child,
+th:last-child {
+  white-space: normal !important;     /* allow wrapping at spaces */
+  word-break: normal !important;      /* only break if needed */
+  overflow-wrap: break-word;          /* break at word boundaries if needed */
+  max-width: 300px;                   /* restrict width to allow wrap */
+  padding: 10px;
+  vertical-align: top;
+}
+
+
 
 .dark-form {
   /* background: rgb(159, 217, 200); */

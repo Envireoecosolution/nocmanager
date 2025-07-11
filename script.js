@@ -85,7 +85,7 @@ function renderTableRow(client, showPen = false) {
       <td>${expiryDisplay || ''}</td>
       <td>${client.appstatus || ''}</td>
       <td>${client.remarks || ''}
-        ${showPen ? `<span class="edit-icon" style="cursor:pointer;" title="Edit" data-appno="${client.appno}"> ✏️</span>` : ''}
+        ${showPen ? `<br><span class="edit-icon" style="cursor:pointer; color:#1a73e8;" title="Edit" data-appno="${client.appno}"> Edit </span>` : ''}
       </td>
     </tr>
   `;
@@ -206,14 +206,7 @@ function goHome() {
   getData();
 }
 
-
-
-
 document.addEventListener('DOMContentLoaded', getData);
 document.getElementById('companyName').addEventListener('click', goHome);
 
 window.updateApp = updateApp;
-
-
-
-
