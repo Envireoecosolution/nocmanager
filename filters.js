@@ -7,7 +7,7 @@ const filters = {
 
 // const handledByOptions = [
 //   "Sachit Aggarwal", "Tina Jain Aggarwal", "Rajesh Makker",
-//   "Anchal Aggarwal", "Garima Singh", "Prashant", "Akshay Kumar"
+//   "Anchal Aggarwal", "Garima", "Prashant", "Akshay Kumar"
 // ];
 
 // const statusOptions = ["Working", "On hold", "Closed", "Merged"];
@@ -19,6 +19,8 @@ function renderFilterPanel() {
 
   panel.innerHTML = `
   <h1><u>Filters</u> ✨</h1>
+
+  <br>
 
    <h3><strong><u>Status:</u></strong></h3>
     ${renderCheckboxGroup('status', statusOptions)}
