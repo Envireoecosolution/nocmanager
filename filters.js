@@ -20,15 +20,13 @@ function renderFilterPanel() {
   panel.innerHTML = `
   <h1><u>Filters</u> ✨</h1>
 
-  <br>
-
-   <h3><strong><u>Status:</u></strong></h3>
+    <br><br><h3><u>Status:</u></h3>
     ${renderCheckboxGroup('status', statusOptions)}
 
-    <br> <h3><strong><u>Handled By:</u></strong></h3>
+    <br><h3><u>Handled By:</u></h3>
     ${renderCheckboxGroup('handledBy', handledByOptions)}
 
-    <br> <h3><strong><u>Expiry:</u></strong></h3>
+    <br> <h3><u>Expiry:</u></h3>
     ${renderCheckboxGroup('expiry', expiryOptions, true)}
 
   `;
