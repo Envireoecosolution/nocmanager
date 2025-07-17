@@ -1,7 +1,3 @@
-console.log("✅ form.js is loaded");
-
-
-// ✅ FINAL FIXED form.js (Dropdowns now populate correctly and all console errors resolved)
 
 // ✅ Define dropdown options once (moved out of filters.js)
 const statusOptions = ["Merged", "On Hold", "Closed", "Working"];
@@ -29,20 +25,6 @@ const appStatusOptions = [
   "Signed Application Uploaded by Applicant",
   "Under Observation"
 ];
-
-// const { data, error } = await supabase
-//   .from('Appdata')
-//   .select('*')
-//   .eq('appno', appno)
-//   .limit(1);
-
-// const record = data && data.length > 0 ? data[0] : null;
-
-// if (error || !record) {
-//   throw new Error('Could not fetch application data.');
-// }
-
-
 
 
 // ✅ Robust dropdown renderer
@@ -118,8 +100,6 @@ async function renderAppForm(mode, client = {}) {
   document.getElementById('nocexpirydate').value = client.nocexpirydate || '';
   document.getElementById('remarks').value = client.remarks || '';
 
-
-
   newForm.addEventListener('submit', async function (e) {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -173,8 +153,6 @@ async function renderAppForm(mode, client = {}) {
 function addApp() {
   renderAppForm('add');
 }
-
-
 
 
 document.addEventListener('DOMContentLoaded', () => {

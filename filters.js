@@ -5,22 +5,16 @@ const filters = {
   expiry: []
 };
 
-// const handledByOptions = [
-//   "Sachit Aggarwal", "Tina Jain Aggarwal", "Rajesh Makker",
-//   "Anchal Aggarwal", "Garima", "Prashant", "Akshay Kumar"
-// ];
 
-// const statusOptions = ["Working", "On hold", "Closed", "Merged"];
-// const expiryOptions = ["30", "90"];
 
 function renderFilterPanel() {
   const panel = document.getElementById('filterPanel');
   if (!panel) return;
 
   panel.innerHTML = `
-  <h1><u>Filters</u> ✨</h1>
+  <h1>Filters✨</h1>
 
-    <br><br><h3><u>Status:</u></h3>
+    <br><h3><u>Status:</u></h3>
     ${renderCheckboxGroup('status', statusOptions)}
 
     <br><h3><u>Handled By:</u></h3>
@@ -39,15 +33,47 @@ function renderFilterPanel() {
 
 
 function renderCheckboxGroup(name, options, numeric = false) {
-  return options.map(option => `
-    <div>
-      <label>
-        <input type="checkbox" class="filter-checkbox" data-type="${name}" value="${option}">
-        ${numeric ? `Next ${option} Days` : option}
-      </label>
-    </div>
-  `).join('');
+  return options.map(option => {
+    const className = getCheckboxClass(name, option);
+
+    return `
+      <div>
+        <label class="${className}">
+          <input type="checkbox" class="filter-checkbox" data-type="${name}" value="${option}">
+          ${numeric ? `Next ${option} Days` : option}
+        </label>
+      </div>
+    `;
+  }).join('');
 }
+
+
+
+function getCheckboxClass(group, value) {
+  if (group === 'status') {
+    switch (value.toLowerCase()) {
+      case 'merged': return 'status-merged';
+      case 'on hold': return 'status-onhold';
+      case 'closed': return 'status-closed';
+      case 'working': return 'status-working';
+    }
+  }
+
+    if (group === 'handledBy') {
+    switch (value.toLowerCase()) {
+      case 'sachit aggarwal': return 'handled-sachit';
+      case 'tina jain aggarwal': return 'handled-tina';
+      case 'rajesh makker': return 'handled-rajesh';
+      case 'anchal aggarwal': return 'handled-anchal';
+      case 'garima singh': return 'handled-garima';
+      case 'prashant': return 'handled-prashant';
+      case 'akshay kumar': return 'handled-akshay';
+    }
+  }
+
+  return '';
+}
+
 
 function handleFilterChange() {
   const type = this.getAttribute('data-type');

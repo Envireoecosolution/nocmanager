@@ -175,8 +175,20 @@ function animateCount(id, target) {
 }
 
 function goHome() {
+  // Ensure main app is visible
+  const mainContent = document.querySelector(".filter-and-main");
+  if (mainContent) mainContent.style.display = "flex";
+
+  const paymentSection = document.getElementById('paymentSection');
+  if (paymentSection) paymentSection.style.display = 'none';
+
+  // Hide login/auth form if it's open
+  const authBox = document.getElementById("authContainer");
+  if (authBox) authBox.style.display = "none";
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
   if (document.activeElement) document.activeElement.blur();
+
   [
     '#formContainer', '.table-wrapper', '#applicationSection', '.modal', '.toast',
     '#searchSection', '.login-form', '.filter-results', '.main-panel table'
@@ -184,27 +196,193 @@ function goHome() {
     const el = document.querySelector(selector);
     if (el) el.style.display = 'none';
   });
+
   const checkboxes = document.querySelectorAll('#filterPanel input[type="checkbox"]');
   checkboxes.forEach(cb => cb.checked = false);
+
   if (typeof filters !== 'undefined') {
     filters.status = [];
     filters.handledBy = [];
     filters.expiry = [];
   }
+
   const dashboard = document.getElementById("dashboardSection");
   if (dashboard) {
     dashboard.classList.remove("hidden");
     dashboard.style.display = 'block';
     dashboard.classList.add("fade-in");
   }
+
   ['.stats-grid', '.charts-grid', '.expiring-table'].forEach(sel => {
     const el = document.querySelector(sel);
     if (el) el.removeAttribute("style");
   });
+
   const filterPanel = document.getElementById("filterPanel");
   if (filterPanel) filterPanel.style.display = 'block';
+
   getData();
 }
+
+
+// Currency formatting function
+function formatCurrency(num) {
+  if (!num || isNaN(num)) return '';
+  return `₹${Number(num).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+// Payment Section
+async function payments() {
+  [
+    '#formContainer', '.table-wrapper', '#authContainer',
+    '#dashboardSection', '.stats-grid', '.charts-grid',
+    '#filterPanel', '.expiring-table', '#paymentSection'
+  ].forEach(selector => {
+    document.querySelectorAll(selector).forEach(el => el.style.display = 'none');
+  });
+
+  const paymentSection = document.getElementById('paymentSection');
+  if (paymentSection) paymentSection.style.display = 'block';
+
+  await loadPaymentData();
+}
+
+async function loadPaymentData() {
+  const { data, error } = await supabase.from('Payment').select('*');
+  const tableBody = document.getElementById('paymentBody');
+
+  if (!tableBody) {
+    console.error("paymentBody element not found.");
+    return;
+  }
+
+  if (error) {
+    console.error("Error loading payment data:", error.message);
+    tableBody.innerHTML = `<tr><td colspan="16">Error loading data</td></tr>`;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    tableBody.innerHTML = `<tr><td colspan="16">No payment records found.</td></tr>`;
+    return;
+  }
+
+  tableBody.innerHTML = ''; // Clear any existing rows
+
+  data.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="text-align: center;">${row.number ?? ''}</td>
+      <td>${row.invoiceno ?? ''}</td>
+      <td>${formatDateToDDMMYYYY(row.invoicedate)}</td>
+      <td>${row.clientname ?? ''}</td>
+      <td style="text-align: right;">${formatCurrency(row.ibt)}</td>
+      <td style="text-align: right;">${formatCurrency(row.gst)}</td>
+      <td style="text-align: right;">${formatCurrency(row.tds)}</td>
+      <td style="text-align: right;">${formatCurrency(row.amount)}</td>
+      <td style="text-align: right;">${formatCurrency(row.SigningAmt)}</td>
+      <td style="text-align: right;">${formatCurrency(row["1streceived"])}</td>
+      <td>${formatDateToDDMMYYYY(row.dateofrec)}</td>
+      <td style="text-align: right;">${formatCurrency(row.pending)}</td>
+      <td>${formatDateToDDMMYYYY(row.dateofpay)}</td>
+      <td>${row.Remarks ?? ''}</td>
+    `;
+    tableBody.appendChild(tr);
+  });
+}
+
+// Export functionality using SheetJS
+function exportPaymentToExcel() {
+  const table = document.getElementById('paymentTable');
+  if (!table) return;
+
+  const workbook = XLSX.utils.table_to_book(table, { sheet: "Payments" });
+  XLSX.writeFile(workbook, `Payment_Tracker_${new Date().toISOString().slice(0, 10)}.xlsx`);
+}
+
+document.getElementById('exportPaymentBtn')?.addEventListener('click', exportPaymentToExcel);
+
+
+
+  let isLogin = true;
+
+  const authContainerEl = document.getElementById("authContainer");
+  const filterMainEl = document.querySelector(".filter-and-main");
+  const authFormEl = document.getElementById("authForm");
+  const authTitleEl = document.getElementById("authTitle");
+  const toggleLinkEl = document.getElementById("toggleLink");
+  const authBtnEl = authFormEl.querySelector("button");
+
+  function syncAuthUI() {
+    authTitleEl.textContent = isLogin ? "Login" : "Sign Up";
+    authBtnEl.textContent = isLogin ? "Log In" : "Sign Up";
+    toggleLinkEl.textContent = isLogin
+      ? "New user? Sign up here"
+      : "Already have an account? Login here";
+  }
+
+  function showAuthForm() {
+    authContainerEl.style.display = "flex";
+    filterMainEl.style.display = "none";
+    syncAuthUI();
+  }
+
+  function closeAuthBox() {
+    authContainerEl.style.display = "none";
+    filterMainEl.style.display = "block";
+  }
+
+  toggleLinkEl.addEventListener("click", () => {
+    isLogin = !isLogin;
+    syncAuthUI();
+  });
+
+  authFormEl.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = e.target.email.value.trim();
+    const password = e.target.password.value.trim();
+
+    let result;
+    if (isLogin) {
+      result = await supabase.auth.signInWithPassword({ email, password });
+    } else {
+      result = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { role: "employee" } }
+      });
+    }
+
+    if (result.error) {
+      alert(result.error.message);
+    } else {
+      closeAuthBox();
+      checkUserRole();
+    }
+  });
+
+  async function logoutUser() {
+    await supabase.auth.signOut();
+    alert("Logged out!");
+    filterMainEl.style.display = "none";
+    isLogin = true;
+    showAuthForm();
+  }
+
+  async function checkUserRole() {
+    const { data: { user } } = await supabase.auth.getUser();
+    const role = user?.user_metadata?.role || "employee";
+    console.log("Logged-in role:", role);
+  }
+
+  supabase.auth.getSession().then(({ data: { session } }) => {
+  if (session) {
+    closeAuthBox();
+    checkUserRole();
+  }
+});
+
+
 
 document.addEventListener('DOMContentLoaded', getData);
 document.getElementById('companyName').addEventListener('click', goHome);

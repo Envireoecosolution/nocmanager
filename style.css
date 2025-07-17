@@ -1,9 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital@1&family=Edu+QLD+Beginner:wght@500&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital@1&family=Playpen+Sans+Hebrew:wght@100..800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Averia+Sans+Libre:ital@1&family=Crimson+Text:ital@1&family=Playpen+Sans+Hebrew:wght@100..800&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
-
 html {
-  font-size: 80%;
+  font-size: 90%;
 }
 
 body {
@@ -318,80 +314,6 @@ th:last-child {
 }
 
 
-
-.login-form {
-  background: #1e1e1e;
-  color: white;
-  padding: 2rem 2.5rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  max-width: 420px;
-  margin: 2rem auto;
-}
-
-.login-form h2 {
-  color:white;
-  text-align: center;
-  font-size: 1.8rem;
-  margin-bottom: 1.5rem;
-}
-
-.login-form label {
-  color: white;
-  display: block;
-  margin-bottom: 0.3rem;
-  font-weight: 500;
-  margin-top: 1rem;
-}
-
-.login-form input[type="email"],
-.login-form input[type="password"] {
-  width: 100%;
-  padding: 0.6rem 0.8rem;
-  border: 1px solid rgb(53, 53, 53);
-  border-radius: 6px;
-  background-color: rgb(53, 53, 53);
-  color: #fff;
-  font-size: 0.95rem;
-  margin-bottom: 12px;
-}
-
-.login-form button {
-  width: 100%;
-  padding: 0.6rem 0.8rem;
-  background-color: #4ea8ff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  cursor: pointer;
-  margin-top: 1.5rem;
-  transition: background-color 0.3s ease;
-}
-
-.login-form button:hover {
-  background-color: #218838;
-}
-
-.signup-link {
-  display: block;
-  text-align: center;
-  margin-top: 5.2rem;
-  color: #ccc;
-  font-size: 0.95rem;
-}
-
-.signup-link span {
-  color: #4ea8ff;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-.signup-link span:hover {
-  text-decoration: underline;
-}
-
-
 /* dashboard.css */
 
 
@@ -526,7 +448,7 @@ th:last-child {
 
 
 .filter-panel {
-  width: 150px;
+  width: 270px;
   font-weight: bolder;
   padding: 10px;
   border-right: 1px solid #ccc;
@@ -546,6 +468,45 @@ th:last-child {
 label {
   font-weight: bolder;
 }
+
+.status-merged {
+  color: #6a1b9a;
+  font-weight: bolder;
+  text-transform: uppercase;
+}
+
+.status-onhold {
+  color: #0937dd;
+  font-weight: bolder;
+  text-transform: uppercase;
+}
+
+.status-closed {
+  color: #ec6e1bdb;
+  font-weight: bolder;
+  text-transform: uppercase;
+}
+
+.status-working {
+  color: #03b000;
+  font-weight: bolder;
+  text-transform: uppercase;
+}
+
+[class^="handled-"] {
+  font-weight: 900;
+  font-size: 1.05rem;
+  /* text-transform: uppercase; */
+}
+
+.handled-sachit { color: #1e88e5; }
+.handled-tina { color: #6a1b9a; }
+.handled-rajesh { color: #2a370cdd; }
+.handled-anchal { color: #f57c00; }
+.handled-garima { color: #2e7d32; }
+.handled-prashant { color: #bb15a8; }
+.handled-akshay { color: #5d4037; }
+
 
 #filterPanel h3 {
   font-weight: bolder;
@@ -622,3 +583,109 @@ label {
   margin-bottom: 12px; /* Space between groups */
 }
 
+
+#authContainer {
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  background: #f9f9f9;
+  padding-top: 60px; /* adjust as needed */
+}
+
+
+.login-box {
+  background: #ffffff;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.login-box h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.login-box .subheading {
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+  color: #333;
+}
+
+.login-box .subsubheading {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.login-box input[type="email"],
+.login-box input[type="password"] {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  margin-bottom: 1.2rem;
+}
+
+.form-options a {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: 500;
+}
+
+.login-button {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #007bff;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #007bff;
+}
+
+#toggleLink {
+  margin-top: 1rem;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+
+ .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: sans-serif;
+    margin-top: 20px;
+  }
+  .styled-table th,
+  .styled-table td {
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .styled-table th {
+    background-color: #f9f9f9;
+  }
