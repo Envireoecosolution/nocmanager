@@ -110,43 +110,46 @@ async function renderAppForm(mode, client = {}) {
     if (isUpdate) formValues.appno = client.appno;
 
     if (isUpdate) {
-      const { error } = await supabase.from('Appdata').update(formValues).eq('appno', formValues.appno);
-      if (error) {
-        alert("Error updating application: " + error.message);
-      } else {
-        alert("Application updated successfully!");
-        container.style.display = 'none';
-        if (filterPanel) filterPanel.style.display = 'block';
-        getData();
-      }
-    } else {
-      const { data: existing, error: checkError } = await supabase
-        .from('Appdata')
-        .select('appno')
-        .eq('appno', formValues.appno);
+  const { error } = await supabase.from('Appdata').update(formValues).eq('appno', formValues.appno);
+  if (error) {
+    alert("Error updating application: " + error.message);
+  } else {
+    alert("Application updated successfully!");
+    container.style.display = 'none';
+    if (filterPanel) filterPanel.style.display = 'block';
+    getData();
+  }
+} else {
+  // Duplicate check before inserting
+  const { data: existingApp, error: checkError } = await supabase
+    .from('Appdata')
+    .select('appno')
+    .eq('appno', formValues.appno)
+    .maybeSingle(); // Optional: makes response easier to handle
 
-      if (checkError) {
-        alert('Error checking existing application number.');
-        return;
-      }
+  if (checkError) {
+    alert('Error checking application number: ' + checkError.message);
+    return;
+  }
 
-      if (existing && existing.length > 0) {
-        alert('Application number already exists!!');
-        return;
-      }
+  if (existingApp) {
+    alert('❌ Application number already exists. Please enter a unique one.');
+    return;
+  }
 
-      const { error } = await supabase.from('Appdata').insert([formValues]);
-      if (error) {
-        alert("Error saving Application: " + error.message);
-      } else {
-        alert("Application added successfully!");
-        e.target.reset();
-        container.style.display = 'none';
-        if (filterPanel) filterPanel.style.display = 'block';
-        getData();
-      }
-    }
-  });
+  // Proceed to insert
+  const { error } = await supabase.from('Appdata').insert([formValues]);
+  if (error) {
+    alert("Error saving Application: " + error.message);
+  } else {
+    alert("✅ Application added successfully!");
+    e.target.reset();
+    container.style.display = 'none';
+    if (filterPanel) filterPanel.style.display = 'block';
+    getData();
+  }
+}
+  }); // <-- This closes the newForm.addEventListener, not renderAppForm
 }
 
 // ✅ Global triggers
