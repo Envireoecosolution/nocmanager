@@ -390,7 +390,7 @@ th:last-child {
   background-color: #ffffff;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 30px;
+  padding: 20px;
   margin: 5px auto;
   max-width: 680px;
   transition: all 0.3s ease;
@@ -535,11 +535,11 @@ label {
 
 .handled-sachit { color: #1e88e5; }
 .handled-tina { color: #6a1b9a; }
-.handled-rajesh { color: #2a370cdd; }
+.handled-rajesh { color: #cb1313dd; }
 .handled-anchal { color: #f57c00; }
 .handled-garima { color: #2e7d32; }
 .handled-prashant { color: #bb15a8; }
-.handled-akshay { color: #5d4037; }
+.handled-akshay { color: #742626; }
 
 
 #filterPanel h3 {
