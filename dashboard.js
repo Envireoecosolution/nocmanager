@@ -1,3 +1,5 @@
+// ✅ Fixed dashboard.js with case-insensitive first-letter match for 'handledBy'
+
 document.addEventListener('DOMContentLoaded', async () => {
   const { data, error } = await supabase.from('Appdata').select('*');
   if (error) return console.error('Error loading dashboard data:', error);
@@ -5,12 +7,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const total = data.length;
   const closed = data.filter(d => d.status?.toLowerCase() === 'closed').length;
   const working = data.filter(d => d.status?.toLowerCase() === 'working').length;
+
   const today = new Date();
   const next90 = new Date(today);
   next90.setDate(today.getDate() + 90);
+
   const expiring = data.filter(d => {
-  const exp = new Date(d.nocexpirydate);
-  return exp >= today && exp <= next90;
+    const exp = new Date(d.nocexpirydate);
+    return exp >= today && exp <= next90;
   }).length;
 
   animateCount('totalApps', total);
@@ -18,7 +22,31 @@ document.addEventListener('DOMContentLoaded', async () => {
   animateCount('inProgressApps', working);
   animateCount('expiringApps', expiring);
 
-  renderStatusPieChart(closed, working, total - closed - working);
+  const associateCounts = {
+    Akshay: 0,
+    Garima: 0,
+    Anchal: 0,
+    Prashant: 0
+  };
+
+  data.forEach(app => {
+    const rawName = app.handledby || app.handledBy || "";
+    if (!rawName) return;
+    const name = rawName.trim().toLowerCase();
+
+if (name.includes("akshay")) {
+  associateCounts.Akshay++;
+} else if (name.includes("garima")) {
+  associateCounts.Garima++;
+} else if (name.includes("prashant")) {
+  associateCounts.Prashant++;
+} else if (name.includes("anchal")) {
+  associateCounts.Anchal++;
+}
+
+  });
+
+  renderAssociatePieChart(associateCounts);
   renderMonthlyBarChart(data);
 });
 
@@ -37,18 +65,42 @@ function animateCount(id, target) {
   }, 30);
 }
 
-// Removed incomplete Chart initialization. Use renderStatusPieChart or other functions as needed.
+function renderAssociatePieChart(data) {
+  const ctx = document.getElementById('associatePieChart');
 
-function renderStatusPieChart(closed, working, others) {
-  new Chart(document.getElementById('statusPieChart'), {
+  if (!ctx) {
+    console.error('Canvas for associatePieChart not found');
+    return;
+  }
+
+  new Chart(ctx, {
     type: 'pie',
     data: {
-      labels: ['Closed', 'Working', 'Others'],
+      labels: ['Anchal', 'Garima', 'Prashant', 'Akshay'],
       datasets: [{
-        data: [closed, working, others],
-        backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+        data: [
+          data['Anchal'],
+          data['Garima'],
+          data['Prashant'],
+          data['Akshay'],
+        ],
+        backgroundColor: ['#006400', '#ff1493', '#0000cd', '#ffd700']
       }]
+    },
+
+    options: {
+  plugins: {
+    legend: {
+      display: false   // ⛔ hide default legend
+    },
+    tooltip: {
+      callbacks: {
+        label: (ctx) => `${ctx.label}: ${ctx.parsed}`
+      }
     }
+  }
+}
+
   });
 }
 
@@ -60,6 +112,7 @@ function renderMonthlyBarChart(data) {
       months[month] += 1;
     }
   });
+
   new Chart(document.getElementById('monthlyBarChart'), {
     type: 'bar',
     data: {

@@ -7,7 +7,7 @@
   <meta name="description" content="Envireo Eco Solution Pvt. Ltd. - Your partner in environmental solutions." />
   <meta name="keywords" content="Envireo, Eco Solution, Environmental Services, NOC Management" />
   <meta name="author" content="Envireo Eco Solution Pvt. Ltd." />
-  <title>NOC management</title>
+  <title>Envireo Eco Solutions</title>
   <link rel="icon" href="fav.png" type="image/png" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,7 +42,6 @@
   <div id="filterPanel" class="filter-panel"></div>
   <div class="main-panel">
 
-
   <div id="dashboardSection" style="flex-grow: 1;">
     <div class="dashboard-container">
 
@@ -55,12 +54,19 @@
 
       <div class="charts-grid">
         <div class="chart-card">
-          <h4>Application Status</h4>
-          <canvas id="statusPieChart"></canvas>
+          <h4>Applications Handled by</h4>
+          <div class="pie-legend">
+  <span class="legend-block green">Anchal</span>
+  <span class="legend-block pink">Garima</span>
+  <span class="legend-block blue">Prashant</span>
+  <span class="legend-block yellow">Akshay</span>
+</div>
+<canvas id="associatePieChart" width="300" height="300"></canvas>
+
         </div>
         <div class="chart-card">
           <h4>Applications by Month</h4>
-          <canvas id="monthlyBarChart"></canvas>
+          <canvas id="monthlyBarChart" width="100" height="100"></canvas>
         </div>
       </div>
 
@@ -232,8 +238,6 @@
     </table>
   </div>
 </div>
-
-
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
