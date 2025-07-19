@@ -133,7 +133,7 @@ async function renderAppForm(mode, client = {}) {
   }
 
   if (existingApp) {
-    alert('❌ Application number already exists. Please enter a unique one.');
+    alert('❌ Application number already exists. Please check Application number and try again.');
     return;
   }
 

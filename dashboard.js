@@ -22,29 +22,31 @@ document.addEventListener('DOMContentLoaded', async () => {
   animateCount('inProgressApps', working);
   animateCount('expiringApps', expiring);
 
-  const associateCounts = {
-    Akshay: 0,
-    Garima: 0,
-    Anchal: 0,
-    Prashant: 0
-  };
+  // ✅ Only include applications where status is "working"
+const workingData = data.filter(d => d.status?.toLowerCase() === 'working');
 
-  data.forEach(app => {
-    const rawName = app.handledby || app.handledBy || "";
-    if (!rawName) return;
-    const name = rawName.trim().toLowerCase();
+const associateCounts = {
+  Akshay: 0,
+  Garima: 0,
+  Anchal: 0,
+  Prashant: 0
+};
 
-if (name.includes("akshay")) {
-  associateCounts.Akshay++;
-} else if (name.includes("garima")) {
-  associateCounts.Garima++;
-} else if (name.includes("prashant")) {
-  associateCounts.Prashant++;
-} else if (name.includes("anchal")) {
-  associateCounts.Anchal++;
-}
+workingData.forEach(app => {
+  const rawName = app.handledby || app.handledBy || "";
+  if (!rawName) return;
+  const name = rawName.trim().toLowerCase();
 
-  });
+  if (name.includes("akshay")) {
+    associateCounts.Akshay++;
+  } else if (name.includes("garima")) {
+    associateCounts.Garima++;
+  } else if (name.includes("prashant")) {
+    associateCounts.Prashant++;
+  } else if (name.includes("anchal")) {
+    associateCounts.Anchal++;
+  }
+});
 
   renderAssociatePieChart(associateCounts);
   renderMonthlyBarChart(data);
