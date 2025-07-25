@@ -12,15 +12,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   const next90 = new Date(today);
   next90.setDate(today.getDate() + 90);
 
-  const expiring = data.filter(d => {
-    const exp = new Date(d.nocexpirydate);
-    return exp >= today && exp <= next90;
-  }).length;
+  const onHold = data.filter(d => d.status?.toLowerCase() === 'on hold').length;
+
 
   animateCount('totalApps', total);
   animateCount('closedApps', closed);
   animateCount('inProgressApps', working);
-  animateCount('expiringApps', expiring);
+  animateCount('onHoldApps', onHold);
 
   // ✅ Only include applications where status is "working"
 const workingData = data.filter(d => d.status?.toLowerCase() === 'working');
