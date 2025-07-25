@@ -139,12 +139,7 @@ async function getData() {
   const total = data.length;
   const closed = data.filter(c => c.status?.toLowerCase() === 'closed').length;
   const inProgress = data.filter(c => c.status?.toLowerCase() === 'working').length;
-  const expiringSoon = data.filter(c => {
-    const expiry = new Date(c.nocexpirydate);
-    const today = new Date();
-    const daysLeft = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
-    return daysLeft <= 90 && daysLeft >= 0;
-  }).length;
+  const onHold = data.filter(c => c.status?.toLowerCase() === 'on hold').length;
 
   ["totalApps", "closedApps", "inProgressApps", "onHoldApps"].forEach(id => {
     const el = document.getElementById(id);

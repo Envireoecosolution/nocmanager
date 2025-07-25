@@ -51,9 +51,14 @@ workingData.forEach(app => {
 });
 
 function animateCount(id, target) {
+  const el = document.getElementById(id);
+  if (!el) {
+    console.warn(`Element with id "${id}" not found.`);
+    return;
+  }
+
   let count = 0;
   const step = Math.ceil(target / 50);
-  const el = document.getElementById(id);
   const interval = setInterval(() => {
     count += step;
     if (count >= target) {
@@ -64,6 +69,7 @@ function animateCount(id, target) {
     }
   }, 30);
 }
+
 
 function renderAssociatePieChart(data) {
   const ctx = document.getElementById('associatePieChart');
