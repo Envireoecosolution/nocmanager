@@ -437,10 +437,10 @@ th:last-child {
   color: #fff;
 }
 
-.legend-block.green { background-color: #006400; }
-.legend-block.pink { background-color: #ff1493; }
-.legend-block.blue { background-color: #0000cd; }
-.legend-block.yellow { background-color: #ffd700; }
+.legend-block.green { background-color: #006acdff; }
+.legend-block.pink { background-color: #fd5113ff; }
+.legend-block.blue { background-color: #00ff15ff; }
+.legend-block.yellow { background-color: #e9c407ff; }
 
 
 #statusPieChart {

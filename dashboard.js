@@ -90,7 +90,7 @@ function renderAssociatePieChart(data) {
           data['Prashant'],
           data['Akshay'],
         ],
-        backgroundColor: ['#006400', '#ff1493', '#0000cd', '#ffd700']
+        backgroundColor: ['#006acdff', '#fd5113ff', '#00ff15ff', '#e9c407ff' ]
       }]
     },
 
