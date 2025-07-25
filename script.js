@@ -146,7 +146,7 @@ async function getData() {
     return daysLeft <= 90 && daysLeft >= 0;
   }).length;
 
-  ["totalApps", "closedApps", "inProgressApps", "expiringApps"].forEach(id => {
+  ["totalApps", "closedApps", "inProgressApps", "onHoldApps"].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = 0;
   });
@@ -155,7 +155,7 @@ async function getData() {
     animateCount("totalApps", total);
     animateCount("closedApps", closed);
     animateCount("inProgressApps", inProgress);
-    animateCount("expiringApps", expiringSoon);
+    animateCount("onHoldApps", onHold);
   }, 10);
 }
 
