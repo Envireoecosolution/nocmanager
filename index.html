@@ -31,12 +31,47 @@
 
     <div class="navbar-right">
       <a href="#" onclick="goHome()">Home</a>
-      <a href="#" onclick="showAuthForm()">Login</a>
-      <a href="#" onclick="payments()">Payment <br> Tracker</a>
       <a href="#" id="addAppBtn">Add New <br>Application</a>
+      <a href="#" id="paymentNavItem" onclick="payments()">Payment <br> Tracker</a>
+      <a href="#" id="logoutLink" style="display: none;">Logout</a>
 
     </div>
   </nav>
+
+
+  <div id="associateHome" style="display: none; padding: 20px;">
+<nav class="navbar">
+    <div class="navbar-left">
+      <img src="logo.jpeg" alt="Company Logo">
+      <h1 id="companyName" style="cursor: pointer;">Envireo Eco Solutions</h1>
+    </div>
+
+    <div class="navbar-center">
+        <input type="text" id="searchBar" placeholder="&#x1F50D; Search Client Name or Application No." />
+        <button type="button" id="searchButton">Go</button>
+    </div>
+
+    <div class="navbar-right">
+      <a href="#" onclick="goHome()">Home</a>
+      <a href="#" id="addAppBtn">Add New <br>Application</a>
+      <a href="#" id="logoutLink" style="display: none;">Logout</a>
+
+    </div>
+  </nav>
+
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h2 id="greetingText">Good Morning, [Name]</h2>
+    <div id="digitalClock" style="font-weight: bold;"></div>
+  </div>
+
+  <p id="ongoingCountText" style="margin-top: 20px; font-size: 18px;"></p>
+
+  <div style="margin-top: 20px;">
+    <button onclick="showAssociateApps('ongoing')">See Ongoing Applications</button>
+    <button onclick="showAssociateApps('closed')">Closed Applications</button>
+  </div>
+</div>
+
 
  <div class="filter-and-main">
   <div id="filterPanel" class="filter-panel"></div>
@@ -184,27 +219,7 @@
   </div>
 
 
-<div id="authContainer" style="display: none">
-  <div class="login-box">
-    <h2 id="authTitle">Login</h2><br>
-    <p class="subheading">Welcome to Envireo Eco Solutions</p><br>
-    <p class="subsubheading">Login to access your dashboard to manage applications.</p>
 
-    <form id="authForm">
-      <input type="email" name="email" placeholder="Username" required />
-      <input type="password" name="password" placeholder="Password" required />
-
-      <div class="form-options">
-        <label><input type="checkbox"> Remember me</label>
-        <a href="#">Forgot Password</a>
-      </div>
-
-      <button type="submit" class="login-button">Log In</button>
-    </form>
-
-    <p id="toggleLink">New user? Sign up here</p>
-  </div>
-</div>
 
 <!-- Payment Tracker Section -->
 <div id="paymentSection" style="display: none; padding: px;">
@@ -238,6 +253,46 @@
     </table>
   </div>
 </div>
+
+
+<div id="authContainer" style="display: none">
+  <div class="login-box">
+    <h2 id="authTitle">Login</h2><br>
+    <p class="subheading">Welcome to Envireo Eco Solutions</p><br>
+    <p class="subsubheading">Login to access dashboard to manage applications.</p>
+
+    <form id="authForm">
+      <input type="email" name="email" placeholder="Username" required />
+      <div class="password-container">
+
+      <input type="password" name="password" placeholder="Password" required id="password" />
+      <span id="togglePassword" class="toggle-password" title="Show/Hide password">👁️</span>
+
+      </div>
+
+      <div class="form-options">
+        <label><input type="checkbox"> Remember me</label>
+        <a href="#">Forgot Password</a>
+      </div>
+
+      <button type="submit" class="login-button">Log In</button>
+    </form>
+
+    <p id="toggleLink">New user? Sign up here</p>
+  </div>
+</div>
+
+<footer style="text-align: center; padding: 1rem; font-size: 0.875rem; color: #6b7280; border-top: 1px solid #e5e7eb;">
+  <p>
+    © 2025 Envireo Eco Solution — All rights reserved
+    <span style="margin: 0 0.5rem;">|</span>
+    Created with &#10084;&#65039; by
+    <a href="https://www.linkedin.com/in/akshay6865/" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; text-decoration: none;">
+      Akshay Kumar Ahlawat
+    </a>
+  </p>
+</footer>
+
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>

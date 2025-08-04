@@ -108,7 +108,7 @@ body {
 }
 
 .navbar-right a:nth-child(1),
-.navbar-right a:nth-child(2) {
+.navbar-right a:nth-child(4) {
   margin-top: 5px;
 }
 
@@ -656,6 +656,10 @@ label {
   margin-bottom: 1rem;
 }
 
+.password-container {
+  position: relative;
+}
+
 .login-box input[type="email"],
 .login-box input[type="password"] {
   width: 100%;
@@ -665,7 +669,20 @@ label {
   border-radius: 6px;
   font-size: 0.95rem;
   box-sizing: border-box;
+  padding-right: 2.5rem; /* extra space for the eye icon */
 }
+
+.toggle-password {
+  position: absolute;
+  top: 30%;
+  right: 1rem;
+  transform: translateY(-50%);
+  cursor: pointer;
+  user-select: none;
+  font-size: 1.2rem;
+}
+
+
 
 .form-options {
   display: flex;

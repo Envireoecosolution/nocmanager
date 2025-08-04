@@ -1,10 +1,39 @@
-
 // Supabase configuration via CDN
 const supabaseUrl = 'https://uewuhdigjdrbfcuasibe.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VoZGlnamRyYmZjdWFzaWJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTEzMTAsImV4cCI6MjA2NTEyNzMxMH0.yTTRgpMlumq5gyblYxfqfIvJDsmn0THY6rj1pflUQ-k';
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+const client = supabase.createClient(supabaseUrl, supabaseKey);
 
 let allClients = [];
+
+async function checkUserRole() {
+  const { data: { session } } = await client.auth.getSession();
+  const email = session?.user?.email;
+
+  if (!email) return;
+
+  const { data: userData, error } = await client
+    .from('UserProfiles')
+    .select('role')
+    .eq('email', email)
+    .single();
+
+  if (error) {
+    console.error('Error fetching user role:', error);
+    return;
+  }
+
+  const role = userData.role;
+  localStorage.setItem('userEmail', email);
+  localStorage.setItem('userRole', role);
+
+  applyRoleAccess(role, email);
+}
+
+document.getElementById("logoutLink").addEventListener("click", async () => {
+  await client.auth.signOut();
+  alert("You have been logged out.");
+  location.reload();
+});
 
 // Format YYYY-MM-DD to DD-MM-YYYY
 function formatDateToDDMMYYYY(dateString) {
@@ -27,6 +56,22 @@ function formatDaysRemaining(nocexpirydate) {
   return formattedDate + suffix;
 }
 
+
+   document.addEventListener("DOMContentLoaded", function () {
+    const togglePassword = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("password");
+
+    if (togglePassword && passwordInput) {
+      togglePassword.addEventListener("click", function () {
+        const isPassword = passwordInput.type === "password";
+        passwordInput.type = isPassword ? "text" : "password";
+        togglePassword.textContent = isPassword ? "🙈" : "👁️";
+      });
+    }
+  });
+
+
+
 // Define this near the top or before you assign the button click handler
 function searchClients() {
   document.getElementById('formContainer').style.display = 'none';
@@ -45,7 +90,7 @@ function searchClients() {
   const query = document.getElementById('searchBar')?.value.trim().toLowerCase() || '';
   if (!query) return getData();
 
-  supabase.from('Appdata').select('*').then(({ data, error }) => {
+  client.from('Appdata').select('*').then(({ data, error }) => {
     if (error) return console.error('Search Error:', error);
 
     const filtered = data.filter(client =>
@@ -111,7 +156,7 @@ function populateTable(data) {
 
 async function updateApp({ appno }) {
   try {
-    const { data: record, error } = await supabase
+    const { data: record, error } = await client
       .from('Appdata')
       .select('*')
       .eq('appno', appno)
@@ -128,9 +173,25 @@ async function updateApp({ appno }) {
   }
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  (async () => {
+    const { data: { user }, error } = await client.auth.getUser();
+
+    if (!user || error) {
+      showAuthForm();
+    } else {
+      closeAuthBox();
+      checkUserRole();
+    }
+
+    getData();
+  })();
+});
+
+
 
 async function getData() {
-  const { data, error } = await supabase.from('Appdata').select('*');
+  const { data, error } = await client.from('Appdata').select('*');
   if (error) return console.error("Error fetching data:", error);
   allClients = data;
   populateTable(data);
@@ -180,7 +241,6 @@ function goHome() {
   // Hide login/auth form if it's open
   const authBox = document.getElementById("authContainer");
   if (authBox) authBox.style.display = "none";
-
   window.scrollTo({ top: 0, behavior: 'smooth' });
   if (document.activeElement) document.activeElement.blur();
 
@@ -243,7 +303,7 @@ async function payments() {
 }
 
 async function loadPaymentData() {
-  const { data, error } = await supabase.from('Payment').select('*');
+  const { data, error } = await client.from('Payment').select('*');
   const tableBody = document.getElementById('paymentBody');
 
   if (!tableBody) {
@@ -300,7 +360,6 @@ document.getElementById('exportPaymentBtn')?.addEventListener('click', exportPay
 
 
   let isLogin = true;
-
   const authContainerEl = document.getElementById("authContainer");
   const filterMainEl = document.querySelector(".filter-and-main");
   const authFormEl = document.getElementById("authForm");
@@ -319,63 +378,441 @@ document.getElementById('exportPaymentBtn')?.addEventListener('click', exportPay
   function showAuthForm() {
     authContainerEl.style.display = "flex";
     filterMainEl.style.display = "none";
+    const center = document.querySelector(".navbar-center");
+  const right = document.querySelector(".navbar-right");
+  if (center) center.style.display = "none";
+  if (right) right.style.display = "none";
     syncAuthUI();
   }
 
   function closeAuthBox() {
-    authContainerEl.style.display = "none";
-    filterMainEl.style.display = "block";
+  const authContainerEl = document.getElementById("authContainer");
+  const filterMainEl = document.querySelector(".filter-and-main");
+
+  if (authContainerEl) authContainerEl.style.display = "none";
+  if (filterMainEl) filterMainEl.style.display = "flex"; // not block
   }
+
+    const logout = document.getElementById("logoutLink");
+  if (logout) logout.style.display = "inline-block";
 
   toggleLinkEl.addEventListener("click", () => {
     isLogin = !isLogin;
     syncAuthUI();
   });
 
-  authFormEl.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const email = e.target.email.value.trim();
-    const password = e.target.password.value.trim();
 
-    let result;
-    if (isLogin) {
-      result = await supabase.auth.signInWithPassword({ email, password });
-    } else {
-      result = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { role: "employee" } }
-      });
+  document.getElementById("logoutLink").addEventListener("click", async () => {
+  await client.auth.signOut();
+  alert("You have been logged out.");
+
+  // Hide app, show login
+  document.querySelector(".filter-and-main").style.display = "none";
+  document.getElementById("logoutLink").style.display = "none";
+  document.getElementById("authContainer").style.display = "flex";
+  isLogin = true;
+  syncAuthUI();
+});
+
+
+authFormEl.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = e.target.email.value.trim();
+  const password = e.target.password.value.trim();
+
+  if (!email || !password) {
+    alert("Email and password are required.");
+    return;
+  }
+
+  if (isLogin) {
+    // 🔐 LOGIN section
+    const { data, error } = await client.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      alert("Login failed: " + error.message);
+      return;
     }
 
-    if (result.error) {
-      alert(result.error.message);
-    } else {
-      closeAuthBox();
-      checkUserRole();
+    const { user } = data;
+
+    // ✅ Place this check here
+    if (!user.email_confirmed_at) {
+      alert("Please verify your email before logging in.");
+      return;
     }
-  });
+
+    // ✅ Now hide login form and show dashboard
+    closeAuthBox();
+    checkUserRole();
+
+  } else {
+    // 🆕 SIGNUP section
+    const { data: signUpData, error: signUpError } = await client.auth.signUp({
+      email,
+      password,
+    });
+
+    if (signUpError) {
+      alert("Signup failed: " + signUpError.message);
+      return;
+    }
+
+    const user = signUpData?.user;
+
+    if (!user || !user.id) {
+      alert("Signup succeeded but no user ID returned.");
+      return;
+    }
+
+    const { error: profileError } = await client.from("UserProfiles").insert([
+      {
+        id: user.id,
+        email: user.email,
+        role: "associate"
+      }
+    ]);
+
+    if (profileError) {
+      alert("User created, but failed to assign role: " + profileError.message);
+    } else {
+      alert("Signup successful! Please check your email to verify before logging in.");
+      isLogin = true;
+      syncAuthUI(); // switch to login view
+    }
+  }
+});
 
   async function logoutUser() {
-    await supabase.auth.signOut();
+    await client.auth.signOut();
     alert("Logged out!");
     filterMainEl.style.display = "none";
     isLogin = true;
     showAuthForm();
   }
 
-  async function checkUserRole() {
-    const { data: { user } } = await supabase.auth.getUser();
-    const role = user?.user_metadata?.role || "employee";
-    console.log("Logged-in role:", role);
+
+  function applyRoleAccess(role, email) {
+  const paymentTab = document.getElementById('paymentNavItem');      // <a> tab in navbar
+  const paymentsSection = document.getElementById('paymentSection'); // div content
+  const greetingDiv = document.getElementById('userGreeting');       // optional greeting element
+
+  };
+
+
+
+  async function renderAllPayments() {
+  const { data, error } = await client
+    .from('Payment')
+    .select('*');
+
+  if (error) {
+    console.error("Error fetching payments:", error);
+    return;
   }
 
-  supabase.auth.getSession().then(({ data: { session } }) => {
-  if (session) {
+  const paymentBody = document.getElementById('paymentBody');
+  paymentBody.innerHTML = ''; // Clear old rows
+
+  data.forEach((payment, index) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${payment.pinumber || ''}</td>
+      <td>${payment.pidate || ''}</td>
+      <td>${payment.clientname || ''}</td>
+      <td>${payment.ibt || ''}</td>
+      <td>${payment.gst || ''}</td>
+      <td>${payment.tds || ''}</td>
+      <td>${payment.amount || ''}</td>
+      <td>${payment.SigningAmt || ''}</td>
+      <td>${payment['1streceived'] || ''}</td>
+      <td>${payment.dateofrec || ''}</td>
+      <td>${payment.pending || ''}</td>
+      <td>${payment.dateofpay || ''}</td>
+      <td>${payment.Remarks || ''}</td>
+    `;
+    paymentBody.appendChild(row);
+  });
+}
+
+
+async function checkUserRole() {
+  const { data: { user }, error: authError } = await client.auth.getUser();
+  if (authError) {
+    console.error("Auth error:", authError.message);
+    return;
+  }
+
+  if (!user) {
+    console.error("No user is currently logged in.");
+    return;
+  }
+
+  console.log("Current User:", user);
+
+  const { data, error } = await client
+    .from("userprofiles")
+    .select("role, email")
+    .eq("email", user.email)
+    .maybeSingle();
+
+  if (error || !data) {
+    console.error("Error fetching role:", error?.message || error, "Data:", data);
+    return;
+  }
+
+  const role = data.role.toLowerCase();
+  const email = data.email;
+
+  console.log("User role:", role, "Email:", email);
+
+  applyRoleAccess(role, email);
+}
+
+
+
+client.auth.getSession().then(async ({ data: { session } }) => {
+  const navbarLeft = document.querySelector(".navbar-left");
+  const navbarCenter = document.querySelector(".navbar-center");
+  const navbarRight = document.querySelector(".navbar-right");
+  const companyName = document.getElementById("companyName");
+
+  if (session?.user?.email_confirmed_at) {
     closeAuthBox();
     checkUserRole();
+
+    // ✅ Show all parts
+    navbarLeft.style.display = "flex";
+    navbarCenter.style.display = "flex";
+    navbarRight.style.display = "flex";
+
+    // ✅ Make company name clickable
+    companyName.style.pointerEvents = "auto";
+    companyName.style.cursor = "pointer";
+    companyName.style.color = ""; // Reset if previously grayed out
+
+    document.getElementById("logoutLink").style.display = "inline-block";
+  } else {
+    showAuthForm();
+
+    // ✅ Show only logo + name
+    navbarLeft.style.display = "flex";
+    navbarCenter.style.display = "none";
+    navbarRight.style.display = "none";
+
+    // ❌ Make company name unclickable and gray
+    companyName.style.pointerEvents = "none";
+    companyName.style.cursor = "default";
+    companyName.style.color = "gray";
+
+    document.getElementById("logoutLink").style.display = "none";
   }
 });
+
+
+
+async function fetchUserRole() {
+  const { data: { user }, error: userError } = await client.auth.getUser();
+
+  if (userError || !user) {
+    console.error("User not found or not logged in");
+    return;
+  }
+
+  const { email } = user;
+
+  // Now fetch role from UserProfiles table
+  const { data, error } = await client
+    .from('UserProfiles')
+    .select('role')
+    .eq('email', email)
+    .single();
+
+  if (error) {
+    console.error("Error fetching role:", error);
+    return;
+  }
+
+  const role = data.role;
+
+}
+
+  // Store role and email globally or in localStorage
+  localStorage.setItem('userRole', role);
+  localStorage.setItem('userEmail', email);
+
+  console.log("Logged-in role:", role);
+
+// Role-based access control
+  if (role === 'owner') {
+    paymentTab.style.display = 'inline-block';     // show Payment tab
+    paymentsSection.style.display = 'block';       // show Payment section
+    renderAllApplications();                       // all application data
+    renderAllPayments();                           // all payment data
+  }
+
+  else if (role === 'admin') {
+    paymentTab.style.display = 'none';             // hide Payment tab
+    paymentsSection.style.display = 'none';        // hide Payment section
+    renderAllApplications();                       // all application data
+  }
+
+  else if (role === 'associate') {
+  console.log("🎯 Applying associate UI");
+
+  // Safely hide unnecessary sections
+  const selectorsToHide = [
+    "paymentNavItem",
+    "#paymentSection",
+    "#filterPanel",
+    "#dashboardSection",
+    ".stats-grid",
+    ".charts-grid",
+    ".table-wrapper"
+  ];
+
+  selectorsToHide.forEach(selector => {
+    const el = document.querySelector(selector);
+    if (el) el.style.display = "none";
+    else console.warn(`⚠️ Missing element: ${selector}`);
+  });
+
+  // Show associate layout
+  const associateHome = document.getElementById("associateHome");
+  if (associateHome) associateHome.style.display = "block";
+
+  // Map associate email to name
+  const associateMap = {
+    'akshay1.envireoeco@gmail.com': 'Akshay Kumar',
+    'garima@email.com': 'Garima Singh',
+    'anchal@email.com': 'Anchal Aggarwal',
+  };
+
+  const name = associateMap[email] || email;
+  updateGreeting(name);
+  startDigitalClock();
+
+  // Count ongoing applications
+  (async () => {
+    try {
+      const { data, error } = await client
+        .from('Appdata')
+        .select('*')
+        .ilike('handledBy', `%${name}%`)
+        .neq('status', 'Closed');
+
+      const countTextEl = document.getElementById("ongoingCountText");
+      if (error) {
+        console.error("Error fetching ongoing applications:", error);
+        if (countTextEl) countTextEl.textContent = "Error loading ongoing applications.";
+      } else {
+        if (countTextEl) countTextEl.textContent = `You have ${data.length} ongoing application(s)`;
+      }
+    } catch (err) {
+      console.error("Async error fetching ongoing applications:", err);
+      const countTextEl = document.getElementById("ongoingCountText");
+      if (countTextEl) countTextEl.textContent = "Error loading ongoing applications.";
+    }
+  })();
+}
+
+
+async function renderAllApplications() {
+  const { data, error } = await client
+    .from('Appdata')
+    .select('*');
+
+  if (error) {
+    console.error("Error fetching all applications:", error);
+    return;
+  }
+
+  renderApplicationTable(data); // This should be your function to render rows
+}
+
+async function renderApplicationsByHandledBy(name) {
+  const { data, error } = await client
+    .from('Appdata')
+    .select('*')
+    .ilike('handledBy', `%${name}%`); // Case-insensitive, partial match
+
+  if (error) {
+    console.error(`Error fetching applications for ${name}:`, error);
+    return;
+  }
+
+  renderApplicationTable(data); // Reuse the same rendering function
+}
+
+
+
+function renderApplicationTable(applications) {
+  const tableBody = document.getElementById('clientTable') || document.getElementById('table-body');
+  if (!tableBody) return;
+
+  tableBody.innerHTML = '';
+
+  const role = localStorage.getItem('userRole');
+  const email = localStorage.getItem('userEmail');
+  };
+
+  const userName = associateMap[email];
+
+  applications.forEach(client => {
+    let showPen = false;
+
+    if (role === 'associate' && userName) {
+      // Show edit only if associate and the row is their own
+      showPen = client.handledby?.toLowerCase().includes(userName.toLowerCase());
+    }
+
+    // For admin or owner, no edit icon
+    if (role === 'admin' || role === 'owner') {
+  showPen = true; // Optional: show pen for owner/admin if desired
+}
+
+ tableBody.innerHTML += renderTableRow(client, showPen);
+
+  });
+
+  // Attach click handler to all edit icons
+  document.querySelectorAll('.edit-icon').forEach(icon => {
+    icon.addEventListener('click', e => {
+      const appno = e.target.dataset.appno;
+      if (appno) updateApp({ appno });
+    });
+  });
+
+
+  (async () => {
+  const { data: { user }, error } = await client.auth.getUser();
+
+  if (error || !user) {
+    console.log("❌ Not logged in");
+    return;
+  }
+
+  console.log("✅ Logged in as:", user.email);
+  console.log("🔑 Supabase UID:", user.id);
+
+  const { data: profile, error: roleError } = await client
+    .from("userprofiles")
+    .select("role")
+    .eq("email", user.email)
+    .maybeSingle();
+
+  if (roleError || !profile) {
+    console.warn("⚠️ Role not found for user:", user.email);
+    return;
+  }
+
+  console.log("👤 Role:", profile.role);
+})();
+
 
 
 
