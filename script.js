@@ -468,7 +468,7 @@ authFormEl.addEventListener("submit", async (e) => {
       return;
     }
 
-    const { error: profileError } = await client.from("UserProfiles").insert([
+    const { error: profileError } = await client.from("userprofiles").insert([
       {
         id: user.id,
         email: user.email,
@@ -477,7 +477,7 @@ authFormEl.addEventListener("submit", async (e) => {
     ]);
 
     if (profileError) {
-      alert("User created, but failed to assign role: " + profileError.message);
+      alert("User created. Please check your email to verify before logging in.");
     } else {
       alert("Signup successful! Please check your email to verify before logging in.");
       isLogin = true;
