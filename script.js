@@ -5,6 +5,13 @@ const client = supabase.createClient(supabaseUrl, supabaseKey);
 
 let allClients = [];
 
+  // Map associate email to name
+  const associateMap = {
+    'akshay1.envireoeco@gmail.com': 'Akshay Kumar',
+    'garima@email.com': 'Garima Singh',
+    'anchal@email.com': 'Anchal Aggarwal',
+  };
+
 async function checkUserRole() {
   const { data: { session } } = await client.auth.getSession();
   const email = session?.user?.email;
@@ -464,7 +471,7 @@ authFormEl.addEventListener("submit", async (e) => {
     const user = signUpData?.user;
 
     if (!user || !user.id) {
-      alert("Signup succeeded but no user ID returned.");
+      alert("Signup succeeded. Please check your mail to verify before logging in.");
       return;
     }
 
@@ -552,8 +559,6 @@ async function checkUserRole() {
     return;
   }
 
-  console.log("Current User:", user);
-
   const { data, error } = await client
     .from("userprofiles")
     .select("role, email")
@@ -567,8 +572,6 @@ async function checkUserRole() {
 
   const role = data.role.toLowerCase();
   const email = data.email;
-
-  console.log("User role:", role, "Email:", email);
 
   applyRoleAccess(role, email);
 }
@@ -639,17 +642,20 @@ async function fetchUserRole() {
 
   const role = data.role;
 
-}
-
-  // Store role and email globally or in localStorage
+  // ✅ Move these lines inside the function, using the actual `role` and `email`
   localStorage.setItem('userRole', role);
   localStorage.setItem('userEmail', email);
 
   console.log("Logged-in role:", role);
+}
+
 
 // Role-based access control
-  if (role === 'owner') {
-    paymentTab.style.display = 'inline-block';     // show Payment tab
+const role = localStorage.getItem('userRole');
+const email = localStorage.getItem('userEmail');
+
+if (role === 'owner') {
+    paymentNavItem.style.display = 'inline-block';     // show Payment tab
     paymentsSection.style.display = 'block';       // show Payment section
     renderAllApplications();                       // all application data
     renderAllPayments();                           // all payment data
@@ -684,13 +690,6 @@ async function fetchUserRole() {
   // Show associate layout
   const associateHome = document.getElementById("associateHome");
   if (associateHome) associateHome.style.display = "block";
-
-  // Map associate email to name
-  const associateMap = {
-    'akshay1.envireoeco@gmail.com': 'Akshay Kumar',
-    'garima@email.com': 'Garima Singh',
-    'anchal@email.com': 'Anchal Aggarwal',
-  };
 
   const name = associateMap[email] || email;
   updateGreeting(name);
@@ -731,7 +730,7 @@ async function renderAllApplications() {
     return;
   }
 
-  renderApplicationTable(data); // This should be your function to render rows
+  renderApplicationTable(allClients); // This should be your function to render rows
 }
 
 async function renderApplicationsByHandledBy(name) {
@@ -762,7 +761,7 @@ function renderApplicationTable(applications) {
 
   const userName = associateMap[email];
 
-  applications.forEach(client => {
+  allClients.forEach(client => {
     let showPen = false;
 
     if (role === 'associate' && userName) {
@@ -796,8 +795,6 @@ function renderApplicationTable(applications) {
     return;
   }
 
-  console.log("✅ Logged in as:", user.email);
-  console.log("🔑 Supabase UID:", user.id);
 
   const { data: profile, error: roleError } = await client
     .from("userprofiles")
