@@ -236,67 +236,68 @@
   <div class="add-bill-grid">
     <div class="add-bill-group">
       <label for="bill-invoiceno">Performa/Invoice No.</label>
-      <input type="text" id="bill-invoiceno" required />
+      <input type="text" id="bill-invoiceno" name="invoiceno" required />
+
     </div>
 
     <div class="add-bill-group">
       <label for="bill-invoicedate">Date</label>
-      <input type="date" id="bill-invoicedate" required />
+      <input type="date" id="bill-invoicedate" name="invoicedate" />
     </div>
 
     <div class="add-bill-group">
       <label for="bill-clientname">Client Name</label>
-      <input type="text" id="bill-clientname" required />
+      <input type="text" id="bill-clientname" name="clientname" required />
     </div>
 
     <div class="add-bill-group">
       <label for="bill-ibt">Amount Before Tax (A)</label>
-      <input type="number" id="bill-ibt" required />
+      <input type="number" id="bill-ibt" name="ibt" required />
     </div>
 
     <div class="add-bill-group">
       <label for="bill-gst">GST @ 18% (B)</label>
-      <input type="number" id="bill-gst" required />
+      <input type="number" id="bill-gst" name="gst" required />
     </div>
 
     <div class="add-bill-group">
       <label for="bill-tds">TDS @ 10% (C)</label>
-      <input type="number" id="bill-tds" required />
+      <input type="number" id="bill-tds" name="tds" required />
     </div>
 
     <div class="add-bill-group">
       <label for="bill-amount">Total Amount (D = A + B - C)</label>
-      <input type="number" id="bill-amount" required />
+      <input type="number" id="bill-amount" name="amount" required />
     </div>
 
     <div class="add-bill-group">
       <label for="bill-signing">Signing Amount</label>
-      <input type="number" id="bill-signing" />
+      <input type="number" id="bill-signing" name="signingAmt" />
     </div>
 
     <div class="add-bill-group">
       <label for="bill-1streceived">1st Installment Received</label>
-      <input type="number" id="bill-1streceived" />
+      <input type="number" id="bill-1streceived" name="1streceived" />
     </div>
 
     <div class="add-bill-group">
       <label for="bill-dateofrec">Date of Receipt (1st)</label>
-      <input type="date" id="bill-dateofrec" />
+      <input type="date" id="bill-dateofrec" name="dateofrec" />
     </div>
 
     <div class="add-bill-group">
       <label for="bill-pending">Payment Pending</label>
-      <input type="number" id="bill-pending" />
+      <input type="number" id="bill-pending" name="pending" />
     </div>
 
     <div class="add-bill-group">
       <label for="bill-dateofpay">Date of Payment</label>
-      <input type="date" id="bill-dateofpay" />
+      <input type="date" id="bill-dateofpay" name="dateofpay" />
     </div>
 
     <div class="add-bill-group" style="grid-column: span 2;">
       <label for="bill-remarks">Remarks</label>
-      <input type="text" id="bill-remarks" />
+      <input type="text" id="bill-remarks" name="remarks" />
     </div>
   </div>
 
@@ -319,7 +320,7 @@
       <div class="password-container">
 
       <input type="password" name="password" placeholder="Password" required id="password" />
-      <span id="togglePassword" class="toggle-password" title="Show/Hide password">👁️</span>
+      <!-- <span id="togglePassword" class="toggle-password" title="Show/Hide password">👁️</span> -->
 
       </div>
 
@@ -345,6 +346,22 @@
     </a>
   </p>
 </footer>
+
+<div id="notification" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #4BB543;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  z-index: 9999;
+  display: none;
+  transition: opacity 0.3s ease-in-out;
+"></div>
+
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
