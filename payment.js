@@ -1,42 +1,101 @@
+// Payment Section
+
+// Currency formatting function
+function formatCurrency(num) {
+  if (!num || isNaN(num)) return '';
+  return `₹${Number(num).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+
 async function payments() {
-  // Hide all other sections (replace these with your actual IDs)
-  document.getElementById("nocDashboardSection").style.display = "none";
-  document.getElementById("nocTableSection").style.display = "none";
+  [
+    '#formContainer', '.table-wrapper', '#authContainer',
+    '#dashboardSection', '.stats-grid', '.charts-grid',
+    '#filterPanel', '.expiring-table', '#paymentSection'
+  ].forEach(selector => {
+    document.querySelectorAll(selector).forEach(el => el.style.display = 'none');
+  });
 
-  // Show payment tracker section
-  const paymentTableSection = document.getElementById("paymentTableSection");
-  paymentTableSection.style.display = "block";
+  const paymentSection = document.getElementById('paymentSection');
+  if (paymentSection) paymentSection.style.display = 'block';
 
-  const { data, error } = await supabase
-    .from('payment_tracker')
-    .select('*')
-    .order('date', { ascending: false });
+  await loadPaymentData();
+}
 
-  const tbody = document.querySelector("#paymentTable tbody");
-  tbody.innerHTML = ''; // Clear old rows
+async function loadPaymentData() {
+  const { data, error } = await supabase.from('Payment').select('*');
+  const tableBody = document.getElementById('paymentBody');
 
-  if (error) {
-    console.error("Error loading payment tracker:", error);
-    tbody.innerHTML = `<tr><td colspan="11">Error loading data</td></tr>`;
+  if (!tableBody) {
+    console.error("paymentBody element not found.");
     return;
   }
 
-  data.forEach((entry, index) => {
-    const row = `
-      <tr>
-        <td>${index + 1}</td>
-        <td>${entry.date || ''}</td>
-        <td>${entry.invoice_no || ''}</td>
-        <td>${entry.client_name || ''}</td>
-        <td>${entry.invoice_before_tax || ''}</td>
-        <td>${entry.gst_18_percent || ''}</td>
-        <td>${entry.tds_10_percent || ''}</td>
-        <td>${entry.amount_receivable || ''}</td>
-        <td>${entry.actual_amount_received || ''}</td>
-        <td>${entry.date_of_payment || ''}</td>
-        <td>${entry.remarks || ''}</td>
-      </tr>
+  if (error) {
+    console.error("Error loading payment data:", error.message);
+    tableBody.innerHTML = `<tr><td colspan="16">Error loading data</td></tr>`;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    tableBody.innerHTML = `<tr><td colspan="16">No payment records found.</td></tr>`;
+    return;
+  }
+
+  tableBody.innerHTML = ''; // Clear any existing rows
+
+  data.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="text-align: center;">${row.number ?? ''}</td>
+      <td>${row.invoiceno ?? ''}</td>
+      <td>${formatDateToDDMMYYYY(row.invoicedate)}</td>
+      <td>${row.clientname ?? ''}</td>
+      <td style="text-align: right;">${formatCurrency(row.ibt)}</td>
+      <td style="text-align: right;">${formatCurrency(row.gst)}</td>
+      <td style="text-align: right;">${formatCurrency(row.tds)}</td>
+      <td style="text-align: right;">${formatCurrency(row.amount)}</td>
+      <td style="text-align: right;">${formatCurrency(row.SigningAmt)}</td>
+      <td style="text-align: right;">${formatCurrency(row["1streceived"])}</td>
+      <td>${formatDateToDDMMYYYY(row.dateofrec)}</td>
+      <td style="text-align: right;">${formatCurrency(row.pending)}</td>
+      <td>${formatDateToDDMMYYYY(row.dateofpay)}</td>
+      <td>${row.Remarks ?? ''}</td>
     `;
-    tbody.insertAdjacentHTML('beforeend', row);
+    tableBody.appendChild(tr);
   });
 }
+
+// Export functionality using SheetJS
+function exportPaymentToExcel() {
+  const table = document.getElementById('paymentTable');
+  if (!table) return;
+
+  const workbook = XLSX.utils.table_to_book(table, { sheet: "Payments" });
+  XLSX.writeFile(workbook, `Payment_Tracker_${new Date().toISOString().slice(0, 10)}.xlsx`);
+}
+
+document.getElementById('exportPaymentBtn')?.addEventListener('click', exportPaymentToExcel);
+
+
+
+document.getElementById("AddBillBtn").addEventListener("click", () => {
+  const form = document.getElementById("addBillForm");
+  const tableWrapper = document.querySelector(".payment-table-wrapper");
+  const exportBtn = document.getElementById("exportPaymentBtn");
+  const addBtn = document.getElementById("AddBillBtn");
+
+  const isFormVisible = form.style.display === "block";
+
+  if (!isFormVisible) {
+    form.style.display = "block";
+    if (tableWrapper) tableWrapper.style.display = "none";
+    if (exportBtn) exportBtn.style.display = "none";
+    if (addBtn) addBtn.style.display = "none";
+  } else {
+    form.style.display = "none";
+    if (tableWrapper) tableWrapper.style.display = "block";
+    if (exportBtn) exportBtn.style.display = "inline-block";
+    if (addBtn) addBtn.style.display = "inline-block";
+  }
+});

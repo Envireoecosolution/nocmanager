@@ -174,5 +174,5 @@ window.renderAppForm = renderAppForm;
 
 window.statusOptions = statusOptions;
 window.handledByOptions = handlerOptions;
-window.expiryOptions = ["30", "90"]; 
+window.expiryOptions = ["90"]; 
 

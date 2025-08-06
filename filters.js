@@ -12,7 +12,7 @@ function renderFilterPanel() {
   if (!panel) return;
 
   panel.innerHTML = `
-  <h1>Filters✨</h1>
+  <h1>Filters✨</h1><br>
   <h3><u>Status:</u></h3>
     ${renderCheckboxGroup('status', statusOptions)}
 

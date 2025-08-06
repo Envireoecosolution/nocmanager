@@ -740,3 +740,65 @@ label {
   .styled-table th {
     background-color: #f9f9f9;
   }
+
+
+
+    .add-bill-card {
+    max-width: 800px;
+    margin: 20px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: sans-serif;
+  }
+
+  .add-bill-card h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #1a73e8;
+    text-align: center;
+  }
+
+  .add-bill-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .add-bill-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .add-bill-group label {
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+
+  .add-bill-group input {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+
+  .add-bill-actions {
+    text-align: center;
+    margin-top: 30px;
+  }
+
+  .add-bill-actions button {
+    background-color: #1a73e8;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .add-bill-actions button:hover {
+    background-color: #155cc3;
+  }

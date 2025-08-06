@@ -1,7 +1,7 @@
 // Supabase configuration via CDN
 const supabaseUrl = 'https://uewuhdigjdrbfcuasibe.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VoZGlnamRyYmZjdWFzaWJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTEzMTAsImV4cCI6MjA2NTEyNzMxMH0.yTTRgpMlumq5gyblYxfqfIvJDsmn0THY6rj1pflUQ-k';
-const client = supabase.createClient(supabaseUrl, supabaseKey);
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 let allClients = [];
 
@@ -12,35 +12,46 @@ let allClients = [];
     'anchal@email.com': 'Anchal Aggarwal',
   };
 
-async function checkUserRole() {
-  const { data: { session } } = await client.auth.getSession();
-  const email = session?.user?.email;
-
-  if (!email) return;
-
-  const { data: userData, error } = await client
-    .from('UserProfiles')
-    .select('role')
-    .eq('email', email)
-    .single();
-
-  if (error) {
-    console.error('Error fetching user role:', error);
-    return;
-  }
-
-  const role = userData.role;
-  localStorage.setItem('userEmail', email);
-  localStorage.setItem('userRole', role);
-
-  applyRoleAccess(role, email);
-}
-
 document.getElementById("logoutLink").addEventListener("click", async () => {
-  await client.auth.signOut();
+  await supabase.auth.signOut();
   alert("You have been logged out.");
   location.reload();
 });
+
+  (async () => {
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  if (!user || !user.email) {
+    console.warn("⚠️ No user logged in.");
+    return;
+  }
+
+  const { data: profile, error: roleError } = await supabase
+    .from("userprofiles")
+    .select("role")
+    .eq("email", user.email)
+    .maybeSingle();
+
+  if (roleError || !profile) {
+    console.warn("⚠️ Role not found for user:", user.email);
+    return;
+  }
+
+  const role = profile.role;
+  const email = user.email;
+
+  if (role && email) {
+    localStorage.setItem('userRole', role);
+    localStorage.setItem('userEmail', email);
+    applyRoleBasedUI(role, email);
+  }
+
+  console.log("👤 Role:", role);
+})();
+
+
+
+
 
 // Format YYYY-MM-DD to DD-MM-YYYY
 function formatDateToDDMMYYYY(dateString) {
@@ -64,19 +75,6 @@ function formatDaysRemaining(nocexpirydate) {
 }
 
 
-   document.addEventListener("DOMContentLoaded", function () {
-    const togglePassword = document.getElementById("togglePassword");
-    const passwordInput = document.getElementById("password");
-
-    if (togglePassword && passwordInput) {
-      togglePassword.addEventListener("click", function () {
-        const isPassword = passwordInput.type === "password";
-        passwordInput.type = isPassword ? "text" : "password";
-        togglePassword.textContent = isPassword ? "🙈" : "👁️";
-      });
-    }
-  });
-
 
 
 // Define this near the top or before you assign the button click handler
@@ -97,7 +95,7 @@ function searchClients() {
   const query = document.getElementById('searchBar')?.value.trim().toLowerCase() || '';
   if (!query) return getData();
 
-  client.from('Appdata').select('*').then(({ data, error }) => {
+  supabase.from('Appdata').select('*').then(({ data, error }) => {
     if (error) return console.error('Search Error:', error);
 
     const filtered = data.filter(client =>
@@ -163,7 +161,7 @@ function populateTable(data) {
 
 async function updateApp({ appno }) {
   try {
-    const { data: record, error } = await client
+    const { data: record, error } = await supabase
       .from('Appdata')
       .select('*')
       .eq('appno', appno)
@@ -182,13 +180,13 @@ async function updateApp({ appno }) {
 
 document.addEventListener("DOMContentLoaded", () => {
   (async () => {
-    const { data: { user }, error } = await client.auth.getUser();
+    const { data: { user }, error } = await supabase.auth.getUser();
 
     if (!user || error) {
       showAuthForm();
     } else {
       closeAuthBox();
-      checkUserRole();
+      // checkUserRole();
     }
 
     getData();
@@ -198,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 async function getData() {
-  const { data, error } = await client.from('Appdata').select('*');
+  const { data, error } = await supabase.from('Appdata').select('*');
   if (error) return console.error("Error fetching data:", error);
   allClients = data;
   populateTable(data);
@@ -219,7 +217,7 @@ async function getData() {
     animateCount("closedApps", closed);
     animateCount("inProgressApps", inProgress);
     animateCount("onHoldApps", onHold);
-  }, 10);
+  }, 2);
 }
 
 function animateCount(id, target) {
@@ -234,7 +232,7 @@ function animateCount(id, target) {
       clearInterval(interval);
     }
     el.textContent = Math.floor(count);
-  }, 15);
+  }, 25);
 }
 
 function goHome() {
@@ -287,84 +285,6 @@ function goHome() {
 }
 
 
-// Currency formatting function
-function formatCurrency(num) {
-  if (!num || isNaN(num)) return '';
-  return `₹${Number(num).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-}
-
-// Payment Section
-async function payments() {
-  [
-    '#formContainer', '.table-wrapper', '#authContainer',
-    '#dashboardSection', '.stats-grid', '.charts-grid',
-    '#filterPanel', '.expiring-table', '#paymentSection'
-  ].forEach(selector => {
-    document.querySelectorAll(selector).forEach(el => el.style.display = 'none');
-  });
-
-  const paymentSection = document.getElementById('paymentSection');
-  if (paymentSection) paymentSection.style.display = 'block';
-
-  await loadPaymentData();
-}
-
-async function loadPaymentData() {
-  const { data, error } = await client.from('Payment').select('*');
-  const tableBody = document.getElementById('paymentBody');
-
-  if (!tableBody) {
-    console.error("paymentBody element not found.");
-    return;
-  }
-
-  if (error) {
-    console.error("Error loading payment data:", error.message);
-    tableBody.innerHTML = `<tr><td colspan="16">Error loading data</td></tr>`;
-    return;
-  }
-
-  if (!data || data.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="16">No payment records found.</td></tr>`;
-    return;
-  }
-
-  tableBody.innerHTML = ''; // Clear any existing rows
-
-  data.forEach(row => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td style="text-align: center;">${row.number ?? ''}</td>
-      <td>${row.invoiceno ?? ''}</td>
-      <td>${formatDateToDDMMYYYY(row.invoicedate)}</td>
-      <td>${row.clientname ?? ''}</td>
-      <td style="text-align: right;">${formatCurrency(row.ibt)}</td>
-      <td style="text-align: right;">${formatCurrency(row.gst)}</td>
-      <td style="text-align: right;">${formatCurrency(row.tds)}</td>
-      <td style="text-align: right;">${formatCurrency(row.amount)}</td>
-      <td style="text-align: right;">${formatCurrency(row.SigningAmt)}</td>
-      <td style="text-align: right;">${formatCurrency(row["1streceived"])}</td>
-      <td>${formatDateToDDMMYYYY(row.dateofrec)}</td>
-      <td style="text-align: right;">${formatCurrency(row.pending)}</td>
-      <td>${formatDateToDDMMYYYY(row.dateofpay)}</td>
-      <td>${row.Remarks ?? ''}</td>
-    `;
-    tableBody.appendChild(tr);
-  });
-}
-
-// Export functionality using SheetJS
-function exportPaymentToExcel() {
-  const table = document.getElementById('paymentTable');
-  if (!table) return;
-
-  const workbook = XLSX.utils.table_to_book(table, { sheet: "Payments" });
-  XLSX.writeFile(workbook, `Payment_Tracker_${new Date().toISOString().slice(0, 10)}.xlsx`);
-}
-
-document.getElementById('exportPaymentBtn')?.addEventListener('click', exportPaymentToExcel);
-
-
 
   let isLogin = true;
   const authContainerEl = document.getElementById("authContainer");
@@ -410,9 +330,6 @@ document.getElementById('exportPaymentBtn')?.addEventListener('click', exportPay
 
 
   document.getElementById("logoutLink").addEventListener("click", async () => {
-  await client.auth.signOut();
-  alert("You have been logged out.");
-
   // Hide app, show login
   document.querySelector(".filter-and-main").style.display = "none";
   document.getElementById("logoutLink").style.display = "none";
@@ -434,7 +351,7 @@ authFormEl.addEventListener("submit", async (e) => {
 
   if (isLogin) {
     // 🔐 LOGIN section
-    const { data, error } = await client.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -454,11 +371,11 @@ authFormEl.addEventListener("submit", async (e) => {
 
     // ✅ Now hide login form and show dashboard
     closeAuthBox();
-    checkUserRole();
+    // checkUserRole();
 
   } else {
     // 🆕 SIGNUP section
-    const { data: signUpData, error: signUpError } = await client.auth.signUp({
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
     });
@@ -475,7 +392,7 @@ authFormEl.addEventListener("submit", async (e) => {
       return;
     }
 
-    const { error: profileError } = await client.from("userprofiles").insert([
+    const { error: profileError } = await supabase.from("userprofiles").insert([
       {
         id: user.id,
         email: user.email,
@@ -493,26 +410,10 @@ authFormEl.addEventListener("submit", async (e) => {
   }
 });
 
-  async function logoutUser() {
-    await client.auth.signOut();
-    alert("Logged out!");
-    filterMainEl.style.display = "none";
-    isLogin = true;
-    showAuthForm();
-  }
-
-
-  function applyRoleAccess(role, email) {
-  const paymentTab = document.getElementById('paymentNavItem');      // <a> tab in navbar
-  const paymentsSection = document.getElementById('paymentSection'); // div content
-  const greetingDiv = document.getElementById('userGreeting');       // optional greeting element
-
-  };
-
 
 
   async function renderAllPayments() {
-  const { data, error } = await client
+  const { data, error } = await supabase
     .from('Payment')
     .select('*');
 
@@ -547,38 +448,7 @@ authFormEl.addEventListener("submit", async (e) => {
 }
 
 
-async function checkUserRole() {
-  const { data: { user }, error: authError } = await client.auth.getUser();
-  if (authError) {
-    console.error("Auth error:", authError.message);
-    return;
-  }
-
-  if (!user) {
-    console.error("No user is currently logged in.");
-    return;
-  }
-
-  const { data, error } = await client
-    .from("userprofiles")
-    .select("role, email")
-    .eq("email", user.email)
-    .maybeSingle();
-
-  if (error || !data) {
-    console.error("Error fetching role:", error?.message || error, "Data:", data);
-    return;
-  }
-
-  const role = data.role.toLowerCase();
-  const email = data.email;
-
-  applyRoleAccess(role, email);
-}
-
-
-
-client.auth.getSession().then(async ({ data: { session } }) => {
+supabase.auth.getSession().then(async ({ data: { session } }) => {
   const navbarLeft = document.querySelector(".navbar-left");
   const navbarCenter = document.querySelector(".navbar-center");
   const navbarRight = document.querySelector(".navbar-right");
@@ -586,7 +456,7 @@ client.auth.getSession().then(async ({ data: { session } }) => {
 
   if (session?.user?.email_confirmed_at) {
     closeAuthBox();
-    checkUserRole();
+    // checkUserRole();
 
     // ✅ Show all parts
     navbarLeft.style.display = "flex";
@@ -619,7 +489,7 @@ client.auth.getSession().then(async ({ data: { session } }) => {
 
 
 async function fetchUserRole() {
-  const { data: { user }, error: userError } = await client.auth.getUser();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
 
   if (userError || !user) {
     console.error("User not found or not logged in");
@@ -650,78 +520,53 @@ async function fetchUserRole() {
 }
 
 
-// Role-based access control
-const role = localStorage.getItem('userRole');
-const email = localStorage.getItem('userEmail');
+function applyRoleBasedUI(role, email) {
+  if (role === 'owner') {
+    const paymentNavItem = document.getElementById('paymentNavItem');
+    const paymentsSection = document.getElementById('paymentsSection');
 
-if (role === 'owner') {
-    paymentNavItem.style.display = 'inline-block';     // show Payment tab
-    paymentsSection.style.display = 'block';       // show Payment section
-    renderAllApplications();                       // all application data
-    renderAllPayments();                           // all payment data
+    if (paymentNavItem) paymentNavItem.style.display = 'inline-block';
+    if (paymentsSection) paymentsSection.style.display = 'block';
+
+    renderAllApplications();
+    renderAllPayments();
   }
 
   else if (role === 'admin') {
-    paymentTab.style.display = 'none';             // hide Payment tab
-    paymentsSection.style.display = 'none';        // hide Payment section
-    renderAllApplications();                       // all application data
+    const paymentNav = document.getElementById('paymentNavItem');
+    if (paymentNav) paymentNav.style.display = 'none';
   }
 
   else if (role === 'associate') {
-  console.log("🎯 Applying associate UI");
+    console.log("🎯 Applying associate UI");
 
-  // Safely hide unnecessary sections
-  const selectorsToHide = [
-    "paymentNavItem",
-    "#paymentSection",
-    "#filterPanel",
-    "#dashboardSection",
-    ".stats-grid",
-    ".charts-grid",
-    ".table-wrapper"
-  ];
+    const selectorsToHide = [
+      "#paymentNavItem",
+      "#home",
+      "#filterPanel",
+      "#dashboardSection",
+      ".stats-grid",
+      ".charts-grid",
+    ];
 
-  selectorsToHide.forEach(selector => {
-    const el = document.querySelector(selector);
-    if (el) el.style.display = "none";
-    else console.warn(`⚠️ Missing element: ${selector}`);
-  });
+    selectorsToHide.forEach(selector => {
+      const el = document.querySelector(selector);
+      if (el) el.style.display = "none";
+      else console.warn(`⚠️ Missing element: ${selector}`);
+    });
 
-  // Show associate layout
-  const associateHome = document.getElementById("associateHome");
-  if (associateHome) associateHome.style.display = "block";
+    const associateHome = document.getElementById("associateHome");
+    if (associateHome) associateHome.style.display = "block";
 
-  const name = associateMap[email] || email;
-  updateGreeting(name);
-  startDigitalClock();
-
-  // Count ongoing applications
-  (async () => {
-    try {
-      const { data, error } = await client
-        .from('Appdata')
-        .select('*')
-        .ilike('handledBy', `%${name}%`)
-        .neq('status', 'Closed');
-
-      const countTextEl = document.getElementById("ongoingCountText");
-      if (error) {
-        console.error("Error fetching ongoing applications:", error);
-        if (countTextEl) countTextEl.textContent = "Error loading ongoing applications.";
-      } else {
-        if (countTextEl) countTextEl.textContent = `You have ${data.length} ongoing application(s)`;
-      }
-    } catch (err) {
-      console.error("Async error fetching ongoing applications:", err);
-      const countTextEl = document.getElementById("ongoingCountText");
-      if (countTextEl) countTextEl.textContent = "Error loading ongoing applications.";
-    }
-  })();
+    const name = associateMap[email] || email;
+    console.log("✅ Associate Name:", name);
+  }
 }
 
 
+
 async function renderAllApplications() {
-  const { data, error } = await client
+  const { data, error } = await supabase
     .from('Appdata')
     .select('*');
 
@@ -730,7 +575,7 @@ async function renderAllApplications() {
     return;
   }
 
-  renderApplicationTable(allClients); // This should be your function to render rows
+  populateTable(data); // This should be your function to render rows
 }
 
 async function renderApplicationsByHandledBy(name) {
@@ -744,39 +589,9 @@ async function renderApplicationsByHandledBy(name) {
     return;
   }
 
-  renderApplicationTable(data); // Reuse the same rendering function
+  populateTable(data);
 }
 
-
-
-function renderApplicationTable(applications) {
-  const tableBody = document.getElementById('clientTable') || document.getElementById('table-body');
-  if (!tableBody) return;
-
-  tableBody.innerHTML = '';
-
-  const role = localStorage.getItem('userRole');
-  const email = localStorage.getItem('userEmail');
-  };
-
-  const userName = associateMap[email];
-
-  allClients.forEach(client => {
-    let showPen = false;
-
-    if (role === 'associate' && userName) {
-      // Show edit only if associate and the row is their own
-      showPen = client.handledby?.toLowerCase().includes(userName.toLowerCase());
-    }
-
-    // For admin or owner, no edit icon
-    if (role === 'admin' || role === 'owner') {
-  showPen = true; // Optional: show pen for owner/admin if desired
-}
-
- tableBody.innerHTML += renderTableRow(client, showPen);
-
-  });
 
   // Attach click handler to all edit icons
   document.querySelectorAll('.edit-icon').forEach(icon => {
@@ -785,31 +600,6 @@ function renderApplicationTable(applications) {
       if (appno) updateApp({ appno });
     });
   });
-
-
-  (async () => {
-  const { data: { user }, error } = await client.auth.getUser();
-
-  if (error || !user) {
-    console.log("❌ Not logged in");
-    return;
-  }
-
-
-  const { data: profile, error: roleError } = await client
-    .from("userprofiles")
-    .select("role")
-    .eq("email", user.email)
-    .maybeSingle();
-
-  if (roleError || !profile) {
-    console.warn("⚠️ Role not found for user:", user.email);
-    return;
-  }
-
-  console.log("👤 Role:", profile.role);
-})();
-
 
 
 

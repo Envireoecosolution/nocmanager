@@ -30,7 +30,7 @@
     </div>
 
     <div class="navbar-right">
-      <a href="#" onclick="goHome()">Home</a>
+      <a href="#" id="home" onclick="goHome()">Home</a>
       <a href="#" id="addAppBtn">Add New <br>Application</a>
       <a href="#" id="paymentNavItem" onclick="payments()">Payment <br> Tracker</a>
       <a href="#" id="logoutLink" style="display: none;">Logout</a>
@@ -40,36 +40,11 @@
 
 
   <div id="associateHome" style="display: none; padding: 20px;">
-<nav class="navbar">
-    <div class="navbar-left">
-      <img src="logo.jpeg" alt="Company Logo">
-      <h1 id="companyName" style="cursor: pointer;">Envireo Eco Solutions</h1>
-    </div>
 
-    <div class="navbar-center">
-        <input type="text" id="searchBar" placeholder="&#x1F50D; Search Client Name or Application No." />
-        <button type="button" id="searchButton">Go</button>
-    </div>
 
-    <div class="navbar-right">
-      <a href="#" onclick="goHome()">Home</a>
-      <a href="#" id="addAppBtn">Add New <br>Application</a>
-      <a href="#" id="logoutLink" style="display: none;">Logout</a>
+    <h2>Welcome to Envireo Eco Solutions</h2>
+    <p class="subheading">Manage your applications efficiently from here.</p>
 
-    </div>
-  </nav>
-
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    <h2 id="greetingText">Good Morning, [Name]</h2>
-    <div id="digitalClock" style="font-weight: bold;"></div>
-  </div>
-
-  <p id="ongoingCountText" style="margin-top: 20px; font-size: 18px;"></p>
-
-  <div style="margin-top: 20px;">
-    <button onclick="showAssociateApps('ongoing')">See Ongoing Applications</button>
-    <button onclick="showAssociateApps('closed')">Closed Applications</button>
-  </div>
 </div>
 
 <div id="userRoleDisplay" style="text-align: left; margin: 12px; font-weight: bold;"></div>
@@ -78,10 +53,8 @@
  <div class="filter-and-main">
   <div id="filterPanel" class="filter-panel"></div>
   <div class="main-panel">
-
   <div id="dashboardSection" style="flex-grow: 1;">
     <div class="dashboard-container">
-
       <div class="stats-grid">
         <div class="stat-card"><h3>Total <br>Applications</h3><p id="totalApps">0</p></div>
         <div class="stat-card"><h3>Closed<br>Applications</h3><p id="closedApps">0</p></div>
@@ -224,11 +197,13 @@
 
 
 <!-- Payment Tracker Section -->
-<div id="paymentSection" style="display: none; padding: px;">
-  <!-- <h2>💳 Payment Tracker</h2><br> -->
-  <div style="text-align: right; margin-bottom: 5px;">
-  <button id="exportPaymentBtn" style="padding: 6px 12px; background-color: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer;">
-    ⬇️ Export to Excel
+<div id="paymentSection" style="display: none;">
+  <div style="text-align: right;">
+      <button id="AddBillBtn" style="padding: 10px 20px; margin: 0px 6px;font-weight: bolder; font-size: 20px; background-color: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer;">
+      Add New Bill
+    </button>
+  <button id="exportPaymentBtn" style="padding: 10px 20px; font-weight: bolder; font-size: 20px; background-color: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer;">
+     Export to Excel
   </button>
 </div>
   <div class="payment-table-wrapper">
@@ -254,6 +229,82 @@
       <tbody id="paymentBody"></tbody>
     </table>
   </div>
+
+<!-- Hidden form -->
+<form id="addBillForm" class="add-bill-card" style="display: none;">
+  <h1>Add New Bill</h1>
+  <div class="add-bill-grid">
+    <div class="add-bill-group">
+      <label for="bill-invoiceno">Performa/Invoice No.</label>
+      <input type="text" id="bill-invoiceno" required />
+    </div>
+
+    <div class="add-bill-group">
+      <label for="bill-invoicedate">Date</label>
+      <input type="date" id="bill-invoicedate" required />
+    </div>
+
+    <div class="add-bill-group">
+      <label for="bill-clientname">Client Name</label>
+      <input type="text" id="bill-clientname" required />
+    </div>
+
+    <div class="add-bill-group">
+      <label for="bill-ibt">Amount Before Tax (A)</label>
+      <input type="number" id="bill-ibt" required />
+    </div>
+
+    <div class="add-bill-group">
+      <label for="bill-gst">GST @ 18% (B)</label>
+      <input type="number" id="bill-gst" required />
+    </div>
+
+    <div class="add-bill-group">
+      <label for="bill-tds">TDS @ 10% (C)</label>
+      <input type="number" id="bill-tds" required />
+    </div>
+
+    <div class="add-bill-group">
+      <label for="bill-amount">Total Amount (D = A + B - C)</label>
+      <input type="number" id="bill-amount" required />
+    </div>
+
+    <div class="add-bill-group">
+      <label for="bill-signing">Signing Amount</label>
+      <input type="number" id="bill-signing" />
+    </div>
+
+    <div class="add-bill-group">
+      <label for="bill-1streceived">1st Installment Received</label>
+      <input type="number" id="bill-1streceived" />
+    </div>
+
+    <div class="add-bill-group">
+      <label for="bill-dateofrec">Date of Receipt (1st)</label>
+      <input type="date" id="bill-dateofrec" />
+    </div>
+
+    <div class="add-bill-group">
+      <label for="bill-pending">Payment Pending</label>
+      <input type="number" id="bill-pending" />
+    </div>
+
+    <div class="add-bill-group">
+      <label for="bill-dateofpay">Date of Payment</label>
+      <input type="date" id="bill-dateofpay" />
+    </div>
+
+    <div class="add-bill-group" style="grid-column: span 2;">
+      <label for="bill-remarks">Remarks</label>
+      <input type="text" id="bill-remarks" />
+    </div>
+  </div>
+
+  <div class="add-bill-actions">
+    <button type="submit">Submit</button>
+  </div>
+</form>
+
 </div>
 
 
@@ -300,9 +351,11 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <script src="form.js"></script>
+
   <script src="script.js"></script>
   <script defer src="dashboard.js"></script>
   <script src="filters.js"></script>
+  <script src="form.js"></script>
+  <script src="payment.js"></script>
 </body>
 </html>
