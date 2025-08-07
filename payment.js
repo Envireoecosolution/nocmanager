@@ -75,11 +75,12 @@ async function loadPaymentData() {
       <td>${row.invoiceno ?? ''}</td>
       <td>${formatDateToDDMMYYYY(row.invoicedate)}</td>
       <td>${row.clientname ?? ''}</td>
+      <td style="text-align: right;">${formatCurrency(row.signingAmt)}</td>
       <td style="text-align: right;">${formatCurrency(row.ibt)}</td>
       <td style="text-align: right;">${formatCurrency(row.gst)}</td>
       <td style="text-align: right;">${formatCurrency(row.tds)}</td>
       <td style="text-align: right;">${formatCurrency(row.amount)}</td>
-      <td style="text-align: right;">${formatCurrency(row.signingAmt)}</td>
+      
       <td style="text-align: right;">${formatCurrency(row["1streceived"])}</td>
       <td>${formatDateToDDMMYYYY(row.dateofrec)}</td>
       <td style="text-align: right;">${formatCurrency(row.pending)}</td>

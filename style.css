@@ -802,3 +802,84 @@ label {
   .add-bill-actions button:hover {
     background-color: #155cc3;
   }
+
+
+
+
+
+
+  /* Associate layout */
+
+  .welcome-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.text-section {
+  margin-left: 180px;
+  flex: 1;
+  min-width: 300px;
+}
+
+.welcome-text {
+  color: #7a4dd4; /* Purple color from image */
+  font-size: 4rem;
+  margin-bottom: 10px;
+}
+
+.subheading {
+  font-size: 2rem;
+  color: #444;
+  margin-bottom: 30px;
+}
+
+.cta-button {
+  background-color: #7a4dd4; /* Matching purple */
+  color: #fff;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #673ab7;
+}
+
+.image-section {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.home-illustration {
+  width: 100%;
+  max-width: 500px;
+  transform: translateY(20px); /* Move image up */
+}
+
+@keyframes shakeXY {
+  0%   { transform: translate(0, 0); }
+  10%  { transform: translate(-6px, -6px); }
+  20%  { transform: translate(6px, 6px); }
+  30%  { transform: translate(-6px, 6px); }
+  40%  { transform: translate(6px, -6px); }
+  50%  { transform: translate(-6px, -6px); }
+  60%  { transform: translate(6px, 6px); }
+  70%  { transform: translate(-6px, 6px); }
+  80%  { transform: translate(6px, -6px); }
+  90%  { transform: translate(-6px, 6px); }
+  100% { transform: translate(0, 0); }
+}
+
+.shake-xy {
+  animation: shakeXY 0.6s ease;
+}

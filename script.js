@@ -652,33 +652,68 @@ function applyRoleBasedUI(role, email) {
   }
 
   else if (role === 'associate') {
-    console.log("🎯 Applying associate UI");
+  console.log("🎯 Applying associate UI");
 
-    const selectorsToHide = [
-      "#paymentNavItem",
-      "#home",
-      "#filterPanel",
-      "#dashboardSection",
-      ".stats-grid",
-      ".charts-grid",
-    ];
-
-    selectorsToHide.forEach(selector => {
-      const el = document.querySelector(selector);
-      if (el) el.style.display = "none";
-      else console.warn(`⚠️ Missing element: ${selector}`);
-    });
-
-    const associateHome = document.getElementById("associateHome");
-    if (associateHome) associateHome.style.display = "block";
-
-    const name = associateMap[email] || email;
-    console.log("✅ Associate Name:", name);
-
-  // 💾 Save to global so we can use later on button click
+  const name = associateMap[email] || email;
+  console.log("✅ Associate Name:", name);
   window.loggedInAssociateName = name;
+
+  const selectorsToHide = [
+    "#paymentNavItem",
+    "#searchBar",
+    "#searchButton",
+    "#home",
+    "#filterPanel",
+    "#dashboardSection",
+    ".stats-grid",
+    ".charts-grid"
+  ];
+
+  // 🔥 Hide these immediately on login
+  selectorsToHide.forEach(selector => {
+    const el = document.querySelector(selector);
+    if (el) el.style.display = "none";
+    else console.warn(`⚠️ Missing element: ${selector}`);
+  });
+
+  // ✅ Show associate home
+  const associateHome = document.getElementById("associateHome");
+  if (associateHome) associateHome.style.display = "block";
+
+  // 🔁 Set up company name click to do the same hide/show
+  const companyNameEl = document.getElementById("companyName");
+  if (companyNameEl) {
+    companyNameEl.addEventListener("click", () => {
+      selectorsToHide.forEach(selector => {
+        const el = document.querySelector(selector);
+        if (el) el.style.display = "none";
+      });
+
+      if (associateHome) associateHome.style.display = "block";
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   }
 }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const btn = document.getElementById('showApplicationsBtn');
+    if (btn) {
+      btn.classList.add('shake-xy');
+      
+      // Optional: keep shaking every 4 seconds
+      setInterval(() => {
+        btn.classList.remove('shake-xy');
+        void btn.offsetWidth; // reflow to restart animation
+        btn.classList.add('shake-xy');
+      }, 4000);
+    }
+  }, 2000);
+});
+
+
 
 
 document.getElementById('showApplicationsBtn')?.addEventListener('click', () => {
@@ -687,6 +722,20 @@ document.getElementById('showApplicationsBtn')?.addEventListener('click', () => 
   } else {
     alert("Associate name not found.");
   }
+
+
+
+   // Add a fade-out effect to associateHome
+  const associateHomeEl = document.getElementById("associateHome");
+  if (associateHomeEl) {
+    associateHomeEl.classList.add("fade-out");
+    setTimeout(() => {
+      associateHomeEl.style.display = "none";
+      associateHomeEl.classList.remove("fade-out");
+    }, 300); // match the fade-out duration
+  }
+
+  
 
   // Hide everything
   const elementsToHide = [

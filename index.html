@@ -39,17 +39,23 @@
   </nav>
 
 
-  <div id="associateHome" style="display: none; padding: 100px;">
+<div id="associateHome" style="display: none;" class="associate-split-container">
 
-
-    <h2>Welcome to Envireo Eco Solutions</h2>
+<div class="welcome-container">
+  <div class="text-section">
+    <h2 class="welcome-text">Welcome to Envireo Eco Solutions</h2>
     <p class="subheading">Manage your applications efficiently from here.</p>
+    <button id="showApplicationsBtn" class="cta-button">See Ongoing Applications</button>
+  </div>
+  <div class="image-section">
+    <img src="hi.jpg" alt="Work Illustration" class="home-illustration" />
+  </div>
+</div>
 
-    <button id="showApplicationsBtn" style="margin-top: 40px; padding:20px;">See Ongoing Applications</button>
-
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 </div>
+
+
 
 <div id="userRoleDisplay" style="text-align: left; margin: 12px; font-weight: bold;"></div>
 
@@ -218,11 +224,12 @@
           <th>Performa/<br>Invoice No.</th>
           <th>Date</th>
           <th>Client Name</th>
+          <th>Signing<br>Amount</th>
           <th>Amount<br>Before Tax<br>(A)</th>
           <th>GST @ 18%<br>(B=18% of A)</th>
           <th>TDS @ 10%<br>(C=10% of A)</th>
           <th>Total<br>Amount<br>(D=A+B-C)</th>
-          <th>Signing<br>Amount</th>
+          
           <th>1st Installement<br>Received</th>
           <th>Date of<br>Receipt</th>
           <th>Payment<br>Pending</th>
