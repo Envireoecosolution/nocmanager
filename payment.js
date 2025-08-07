@@ -87,7 +87,7 @@ async function loadPaymentData() {
       <td>
       ${row.remarks || ''}
       <br>
-      <span class="edit-payment" style="cursor:pointer; color:blue; margin-right:10px;">Edit</span><br>
+      <span class="edit-payment" style="cursor:pointer; color:blue; margin-right:10px;">Edit</span><br><br>
       <span class="delete-payment" style="cursor:pointer; color:red;">Delete</span>
     </td>
     `;
@@ -182,7 +182,7 @@ document.addEventListener('click', async function (e) {
     const { error } = await supabase
       .from('Payment')
       .delete()
-      .eq('number', number);
+      .eq('invoiceno', number)
 
     if (error) {
       alert("❌ Error deleting payment: " + error.message);

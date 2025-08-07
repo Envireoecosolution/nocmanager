@@ -114,11 +114,11 @@ async function renderAppForm(mode, client = {}) {
   if (error) {
     alert("Error updating application: " + error.message);
   } else {
-    alert("Application updated successfully!");
-    container.style.display = 'none';
-    if (filterPanel) filterPanel.style.display = 'block';
-    getData();
-  }
+  showNotification("Application updated successfully!");
+  goHome(); // Go back to homepage
+  getData(); // Refresh data
+}
+
 } else {
   // Duplicate check before inserting
   const { data: existingApp, error: checkError } = await supabase
@@ -142,12 +142,12 @@ async function renderAppForm(mode, client = {}) {
   if (error) {
     alert("Error saving Application: " + error.message);
   } else {
-    alert("✅ Application added successfully!");
-    e.target.reset();
-    container.style.display = 'none';
-    if (filterPanel) filterPanel.style.display = 'block';
-    getData();
-  }
+  showNotification("✅ Application added successfully!");
+  e.target.reset();
+  goHome(); // Navigate to homepage and reset UI
+  getData(); // Refresh data (optional if goHome already calls it)
+}
+
 }
   }); // <-- This closes the newForm.addEventListener, not renderAppForm
 }

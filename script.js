@@ -8,8 +8,8 @@ let allClients = [];
   // Map associate email to name
   const associateMap = {
     'akshay1.envireoeco@gmail.com': 'Akshay Kumar',
-    'anchal04aggarwal@gmail.com': 'Garima Singh',
-    'anchal@email.com': 'Anchal Aggarwal',
+    'anchal04aggarwal@gmail.com': 'Anchal Aggarwal',
+    'garima@email.com': 'Garima Singh',
   };
 
 document.getElementById("logoutLink").addEventListener("click", async () => {
@@ -447,7 +447,7 @@ authFormEl.addEventListener("submit", async (e) => {
     <td>
       ${payment.Remarks || ''}
       <br>
-      <span class="edit-payment" style="cursor:pointer; color:blue; margin-right:10px;">Edit</span>
+      <span class="edit-payment" style="cursor:pointer; color:blue; margin-right:10px;">Edit</span><br><br>
       <span class="delete-payment" style="cursor:pointer; color:red;">Delete</span>
     </td>
   `;
@@ -476,7 +476,6 @@ supabase.auth.getSession().then(async ({ data: { session } }) => {
     // ✅ Make company name clickable
     companyName.style.pointerEvents = "auto";
     companyName.style.cursor = "pointer";
-    companyName.style.color = ""; // Reset if previously grayed out
 
     document.getElementById("logoutLink").style.display = "inline-block";
   } else {
@@ -490,7 +489,6 @@ supabase.auth.getSession().then(async ({ data: { session } }) => {
     // ❌ Make company name unclickable and gray
     companyName.style.pointerEvents = "none";
     companyName.style.cursor = "default";
-    companyName.style.color = "gray";
 
     document.getElementById("logoutLink").style.display = "none";
   }
@@ -528,6 +526,112 @@ async function fetchUserRole() {
 
   console.log("Logged-in role:", role);
 }
+
+
+async function renderAllApplications() {
+  const { data, error } = await supabase
+    .from('Appdata')
+    .select('*');
+
+  if (error) {
+    console.error("Error fetching all applications:", error);
+    return;
+  }
+
+  populateTable(data); // This should be your function to render rows
+}
+
+async function renderApplicationsByHandledBy(name) {
+  const { data, error } = await client
+    .from('Appdata')
+    .select('*')
+    .ilike('handledBy', `%${name}%`); // Case-insensitive, partial match
+
+  if (error) {
+    console.error(`Error fetching applications for ${name}:`, error);
+    return;
+  }
+
+  populateTable(data);
+}
+
+
+
+
+
+
+// only for associates
+
+async function loadAssociateApplications(associateName) {
+  try {
+    // Fetch data from Supabase where handledby = associateName and status = 'Working'
+    const { data, error } = await supabase
+      .from('Appdata')
+      .select('*')
+      .eq('handledby', associateName)
+      .eq('status', 'Working');
+
+    if (error) {
+      console.error("❌ Error fetching associate applications:", error.message);
+      return;
+    }
+
+    console.log(`📦 Fetched ${data.length} application(s) for ${associateName}`);
+    renderAssociateTable(data);
+  } catch (err) {
+    console.error("❌ Unexpected error:", err);
+  }
+}
+
+
+function renderAssociateTable(applications) {
+  const tableWrapper = document.querySelector('.table-wrapper');
+  const tbody = document.getElementById('clientTable');
+
+  if (!tableWrapper || !tbody) {
+    console.error("❌ Missing table structure in DOM");
+    return;
+  }
+
+  // Clear previous data
+  tbody.innerHTML = "";
+
+  if (applications.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="11">No applications found.</td></tr>`;
+    tableWrapper.style.display = "block";
+    return;
+  }
+
+  // Populate filtered data
+  applications.forEach(app => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${app.appno || ''}</td>
+      <td>${app.clientname || ''}</td>
+      <td>${app.status || ''}</td>
+      <td>${app.apptype || ''}</td>
+      <td>${app.loginid || ''}</td>
+      <td>${app.password || ''}</td>
+      <td>${app.handledby || ''}</td>
+      <td>${app.nocdate || ''}</td>
+      <td>${app.nocexpirydate || ''}</td>
+      <td>${app.appstatus || ''}</td>
+      <td>${app.remarks || ''}
+  <br>
+  <span class="edit-icon" style="cursor:pointer; color:#1a73e8;" title="Edit" data-appno="${app.appno}"> Edit </span>
+</td>
+
+    `;
+    tbody.appendChild(row);
+  });
+
+  // Show table
+  tableWrapper.style.display = "block";
+}
+
+
+
+
 
 
 function applyRoleBasedUI(role, email) {
@@ -570,37 +674,41 @@ function applyRoleBasedUI(role, email) {
 
     const name = associateMap[email] || email;
     console.log("✅ Associate Name:", name);
+
+  // 💾 Save to global so we can use later on button click
+  window.loggedInAssociateName = name;
   }
 }
 
 
-
-async function renderAllApplications() {
-  const { data, error } = await supabase
-    .from('Appdata')
-    .select('*');
-
-  if (error) {
-    console.error("Error fetching all applications:", error);
-    return;
+document.getElementById('showApplicationsBtn')?.addEventListener('click', () => {
+  if (window.loggedInAssociateName) {
+    loadAssociateApplications(window.loggedInAssociateName);
+  } else {
+    alert("Associate name not found.");
   }
 
-  populateTable(data); // This should be your function to render rows
-}
+  // Hide everything
+  const elementsToHide = [
+    "#associateHome",
+    "#filterPanel",
+    "#dashboardSection",
+    ".stats-grid",
+    ".charts-grid",
+    ".expiring-table",
+    "#searchSection",
+    "#formContainer",
+    "#applicationSection"
+  ];
 
-async function renderApplicationsByHandledBy(name) {
-  const { data, error } = await client
-    .from('Appdata')
-    .select('*')
-    .ilike('handledBy', `%${name}%`); // Case-insensitive, partial match
+  elementsToHide.forEach(selector => {
+    const el = document.querySelector(selector);
+    if (el) el.style.display = "none";
+  });
+});
 
-  if (error) {
-    console.error(`Error fetching applications for ${name}:`, error);
-    return;
-  }
 
-  populateTable(data);
-}
+
 
 
   // Attach click handler to all edit icons
