@@ -69,8 +69,9 @@ async function loadPaymentData() {
   data.forEach((row, index) => {
 
     const tr = document.createElement('tr');
+    tr.setAttribute('data-id', row.invoiceno);
+
     tr.innerHTML = `
-     <td style="text-align: center;">${index + 1}</td>  <!-- S No. -->
       <td>${row.invoiceno ?? ''}</td>
       <td>${formatDateToDDMMYYYY(row.invoicedate)}</td>
       <td>${row.clientname ?? ''}</td>
@@ -78,13 +79,17 @@ async function loadPaymentData() {
       <td style="text-align: right;">${formatCurrency(row.gst)}</td>
       <td style="text-align: right;">${formatCurrency(row.tds)}</td>
       <td style="text-align: right;">${formatCurrency(row.amount)}</td>
-      <td style="text-align: right;">${formatCurrency(row.SigningAmt)}</td>
+      <td style="text-align: right;">${formatCurrency(row.signingAmt)}</td>
       <td style="text-align: right;">${formatCurrency(row["1streceived"])}</td>
       <td>${formatDateToDDMMYYYY(row.dateofrec)}</td>
       <td style="text-align: right;">${formatCurrency(row.pending)}</td>
       <td>${formatDateToDDMMYYYY(row.dateofpay)}</td>
-      <td>${row.Remarks ?? ''}</td>
-      <td><span class="edit-payment" style="color:blue; cursor:pointer;">Edit</span></td>
+      <td>
+      ${row.remarks || ''}
+      <br>
+      <span class="edit-payment" style="cursor:pointer; color:blue; margin-right:10px;">Edit</span><br>
+      <span class="delete-payment" style="cursor:pointer; color:red;">Delete</span>
+    </td>
     `;
     tableBody.appendChild(tr);
   });
@@ -116,12 +121,15 @@ document.getElementById("AddBillBtn").addEventListener("click", () => {
 document.addEventListener('click', async function (e) {
   if (e.target.classList.contains('edit-payment')) {
     const tr = e.target.closest('tr');
-    const number = tr.getAttribute('data-id');
+    const number = tr?.getAttribute('data-id')?.trim();
+
+    console.log("Editing invoiceno:", number);
+
 
     const { data, error } = await supabase
       .from('Payment')
       .select('*')
-      .eq('number', number)
+      .eq('invoiceno', number)
       .maybeSingle();
 
     if (error || !data) {
@@ -140,21 +148,51 @@ document.addEventListener('click', async function (e) {
     document.getElementById('AddBillBtn').style.display = "none";
 
     // Fill form fields
-    document.getElementById('invoiceno').value = data.invoiceno ?? '';
-    document.getElementById('invoicedate').value = data.invoicedate ?? '';
-    document.getElementById('clientname').value = data.clientname ?? '';
-    document.getElementById('ibt').value = data.ibt ?? '';
-    document.getElementById('gst').value = data.gst ?? '';
-    document.getElementById('tds').value = data.tds ?? '';
-    document.getElementById('amount').value = data.amount ?? '';
-    document.getElementById('signingAmt').value = data.signingAmt ?? '';
-    document.getElementById('1streceived').value = data["1streceived"] ?? '';
-    document.getElementById('dateofrec').value = data.dateofrec ?? '';
-    document.getElementById('pending').value = data.pending ?? '';
-    document.getElementById('dateofpay').value = data.dateofpay ?? '';
-    document.getElementById('remarks').value = data.remarks ?? '';
+    document.getElementById('bill-invoiceno').value = data.invoiceno ?? '';
+    document.getElementById('bill-invoicedate').value = data.invoicedate ?? '';
+    document.getElementById('bill-clientname').value = data.clientname ?? '';
+    document.getElementById('bill-ibt').value = data.ibt ?? '';
+    document.getElementById('bill-gst').value = data.gst ?? '';
+    document.getElementById('bill-tds').value = data.tds ?? '';
+    document.getElementById('bill-amount').value = data.amount ?? '';
+    document.getElementById('bill-signing').value = data.signingAmt ?? '';
+    document.getElementById('bill-1streceived').value = data["1streceived"] ?? '';
+    document.getElementById('bill-dateofrec').value = data.dateofrec ?? '';
+    document.getElementById('bill-pending').value = data.pending ?? '';
+    document.getElementById('bill-dateofpay').value = data.dateofpay ?? '';
+    document.getElementById('bill-remarks').value = data.remarks ?? '';
   }
 });
+
+document.addEventListener('click', async function (e) {
+  // Edit handler (already present)
+  if (e.target.classList.contains('edit-payment')) {
+    // your edit logic...
+    return;
+  }
+
+  // DELETE handler
+  if (e.target.classList.contains('delete-payment')) {
+    const tr = e.target.closest('tr');
+    const number = tr.getAttribute('data-id');
+
+    const confirmDelete = confirm("Are you sure you want to delete this payment?");
+    if (!confirmDelete) return;
+
+    const { error } = await supabase
+      .from('Payment')
+      .delete()
+      .eq('number', number);
+
+    if (error) {
+      alert("❌ Error deleting payment: " + error.message);
+    } else {
+      showNotification("🗑️ Payment deleted successfully!");
+      loadPaymentData(); // reloads updated table
+    }
+  }
+});
+
 
 
 // Export functionality using SheetJS
@@ -192,7 +230,7 @@ document.getElementById('addBillForm').addEventListener('submit', async function
     const { error } = await supabase
       .from('Payment')
       .update(formValues)
-      .eq('number', paymentToUpdate);
+      .eq('invoiceno', paymentToUpdate);
 
     if (error) {
       alert("Error updating payment: " + error.message);

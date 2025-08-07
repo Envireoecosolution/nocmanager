@@ -425,26 +425,36 @@ authFormEl.addEventListener("submit", async (e) => {
   const paymentBody = document.getElementById('paymentBody');
   paymentBody.innerHTML = ''; // Clear old rows
 
-  data.forEach((payment, index) => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${index + 1}</td>
-      <td>${payment.pinumber || ''}</td>
-      <td>${payment.pidate || ''}</td>
-      <td>${payment.clientname || ''}</td>
-      <td>${payment.ibt || ''}</td>
-      <td>${payment.gst || ''}</td>
-      <td>${payment.tds || ''}</td>
-      <td>${payment.amount || ''}</td>
-      <td>${payment.SigningAmt || ''}</td>
-      <td>${payment['1streceived'] || ''}</td>
-      <td>${payment.dateofrec || ''}</td>
-      <td>${payment.pending || ''}</td>
-      <td>${payment.dateofpay || ''}</td>
-      <td>${payment.Remarks || ''}</td>
-    `;
-    paymentBody.appendChild(row);
-  });
+  data.forEach((payment) => {
+  const row = document.createElement('tr');
+  row.setAttribute('data-id', payment.invoiceno || '');
+
+
+
+  row.innerHTML = `
+    <td>${payment.pinumber || ''}</td>
+    <td>${payment.pidate || ''}</td>
+    <td>${payment.clientname || ''}</td>
+    <td>${payment.ibt || ''}</td>
+    <td>${payment.gst || ''}</td>
+    <td>${payment.tds || ''}</td>
+    <td>${payment.amount || ''}</td>
+    <td>${payment.signingAmt || ''}</td>  
+    <td>${payment['1streceived'] || ''}</td>
+    <td>${payment.dateofrec || ''}</td>
+    <td>${payment.pending || ''}</td>
+    <td>${payment.dateofpay || ''}</td>
+    <td>
+      ${payment.Remarks || ''}
+      <br>
+      <span class="edit-payment" style="cursor:pointer; color:blue; margin-right:10px;">Edit</span>
+      <span class="delete-payment" style="cursor:pointer; color:red;">Delete</span>
+    </td>
+  `;
+
+  paymentBody.appendChild(row);
+});
+
 }
 
 
