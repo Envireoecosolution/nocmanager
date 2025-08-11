@@ -95,7 +95,7 @@ async function renderAppForm(mode, client = {}) {
   document.getElementById('appno').disabled = isUpdate;
   document.getElementById('clientname').value = client.clientname || '';
   document.getElementById('loginid').value = client.loginid || '';
-  document.getElementById('password').value = client.password || '';
+  document.getElementById('passsword').value = client.password || '';
   document.getElementById('nocdate').value = client.nocdate || '';
   document.getElementById('nocexpirydate').value = client.nocexpirydate || '';
   document.getElementById('remarks').value = client.remarks || '';
@@ -160,13 +160,25 @@ function addApp() {
 
 document.addEventListener('DOMContentLoaded', () => {
   const addAppBtn = document.getElementById('addAppBtn');
+
   if (addAppBtn) {
     addAppBtn.addEventListener('click', function (e) {
       e.preventDefault();
+
+      const role = localStorage.getItem('userRole'); // 🔐 Get stored role
+
+      // ✅ Hide welcome-container if role is 'associate'
+      if (role === 'associate') {
+        const welcomeContainer = document.querySelector('.welcome-container');
+        if (welcomeContainer) welcomeContainer.style.display = 'none';
+      }
+
+      // Proceed with showing the form
       addApp();
     });
   }
 });
+
 
 window.addApp = addApp;
 

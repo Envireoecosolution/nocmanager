@@ -40,7 +40,6 @@
 
 
 <div id="associateHome" style="display: none;" class="associate-split-container">
-
 <div class="welcome-container">
   <div class="text-section">
     <h2 class="welcome-text">Welcome to Envireo Eco Solutions</h2>
@@ -52,12 +51,9 @@
   </div>
 </div>
 
-
 </div>
 
 
-
-<div id="userRoleDisplay" style="text-align: left; margin: 12px; font-weight: bold;"></div>
 
 
  <div class="filter-and-main">
@@ -96,17 +92,17 @@
 
 
     <div class="table-wrapper" style="display: none;">
-    <table>
+    <table id="appTable">
       <thead>
         <tr>
           <th>Application No.</th>
           <th>Client Name</th>
           <th>Status</th>
-          <th>Application Type</th>
+          <th>Application<br>Type</th>
           <th>Login ID</th>
           <th>Password</th>
           <th>Handled By</th>
-          <th>NOC Date</th>
+          <th>NOC <br>Date</th>
           <th>NOC Expiry <br>Date</th>
           <th>Application <br>Status</th>
           <th>Remarks</th>
@@ -147,7 +143,7 @@
       <input class="input-field" type="text" name="loginid" id="loginid" required>
     </label>
     <label>Password:
-      <input class="input-field" type="text" name="password" id="password" required>
+      <input class="input-field" type="text" name="password" id="passsword" required autocomplete="current-password">
     </label>
     <label>Handled By:
       <select class="select-field" name="handledby" id="handledby">
@@ -330,7 +326,7 @@
       <input type="email" name="email" placeholder="Username" required />
       <div class="password-container">
 
-      <input type="password" name="password" placeholder="Password" required id="password" />
+      <input type="password" name="password" placeholder="Password" required id="password"  autocomplete="off"/>
       <!-- <span id="togglePassword" class="toggle-password" title="Show/Hide password">👁️</span> -->
 
       </div>
@@ -375,15 +371,17 @@
 
 
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Third-party libs first (✅ correct) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<!-- ✅ Defer your custom scripts to avoid blocking rendering -->
+<script defer src="script.js"></script>
+<script defer src="dashboard.js"></script>
+<script defer src="filters.js"></script>
+<script defer src="form.js"></script>
+<script defer src="payment.js"></script>
 
-  <script src="script.js"></script>
-  <script defer src="dashboard.js"></script>
-  <script src="filters.js"></script>
-  <script src="form.js"></script>
-  <script src="payment.js"></script>
 </body>
 </html>

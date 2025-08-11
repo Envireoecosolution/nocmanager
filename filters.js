@@ -170,4 +170,4 @@ document.querySelectorAll('#filterPanel input[type="checkbox"]').forEach(checkbo
 });
 
 
-document.addEventListener('DOMContentLoaded', renderFilterPanel);
+// document.addEventListener('DOMContentLoaded', renderFilterPanel);

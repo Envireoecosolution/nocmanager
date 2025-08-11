@@ -143,7 +143,6 @@ body {
   border-radius: 8px;
 }
 
-
 table {
   
   width: 100%;
@@ -154,7 +153,7 @@ table {
   border: 1px solid #ddd;
 }
 
-th {
+#appTable th {
   background-color: #f8f9fa;
   text-align: center;
   font-weight: bold;
@@ -163,7 +162,7 @@ th {
   white-space: nowrap;
 }
 
-td {
+#appTable td {
   border: 1px solid #dee2e6;
   padding: 10px;
   text-align: left;
@@ -171,46 +170,51 @@ td {
   white-space: nowrap;
 }
 
-td a {
+#appTable td a {
   color: #007bff;
   text-decoration: none;
   font-weight: 500;
 }
 
-td a:hover {
+#appTable td a:hover {
   text-decoration: underline;
 }
 
 .table-wrapper {
   width: 100%;
   overflow-x: auto;
+  overflow-y: auto;
   background-color: #ffffff;
   border-radius: 6px;
   margin-top: 10px;
   padding: 5px;
 }
 
-table tbody tr:hover {
+#appTable tbody tr:hover {
   background-color: #f1f1f1;
 }
 
 /* Prevent wrapping for date columns */
-th:nth-child(8), td:nth-child(8),  /* NOC Date */
-th:nth-child(9), td:nth-child(9) { /* NOC Expiry Date */
+#appTable th:nth-child(8), #appTable td:nth-child(8),  /* NOC Date */
+#appTable th:nth-child(9), #appTable td:nth-child(9) { /* NOC Expiry Date */
   white-space: nowrap;
   width: 10px; 
 }
 
 
-/* Enable text wrapping ONLY in the Remarks column */
-td:last-child,
-th:last-child {
-  white-space: normal !important;     
-  word-break: normal !important;      
-  overflow-wrap: break-word;
-  max-width: 500px;              
-  padding: 10px;
-  vertical-align: top;
+#appTable th:nth-child(2),
+#appTable td:nth-child(2) {
+  max-width: 700px;
+  white-space: normal;     
+}
+
+
+#appTable td:last-child {
+max-width: 400px;      /* fixed width */
+  max-height: 80px;      /* fixed height for uniformity */
+  overflow-y: auto;      /* vertical scrollbar if content overflows */
+  box-sizing: border-box;
+
 }
 
 
@@ -603,7 +607,7 @@ label {
 }
 
 #filterPanel {
-  transition: all 0.3s ease;
+  transition: all 0.1s ease-in-out;
 }
 
 

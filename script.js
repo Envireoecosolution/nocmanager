@@ -12,11 +12,7 @@ let allClients = [];
     'garima@email.com': 'Garima Singh',
   };
 
-document.getElementById("logoutLink").addEventListener("click", async () => {
-  await supabase.auth.signOut();
-  alert("You have been logged out.");
-  location.reload();
-});
+
 
   (async () => {
   const { data: { user }, error } = await supabase.auth.getUser();
@@ -49,149 +45,90 @@ document.getElementById("logoutLink").addEventListener("click", async () => {
   console.log("👤 Role:", role);
 })();
 
+function applyRoleBasedUI(role, email) {
+  if (role === 'owner') {
+    const paymentNavItem = document.getElementById('paymentNavItem');
+    const paymentsSection = document.getElementById('paymentsSection');
 
+    if (paymentNavItem) paymentNavItem.style.display = 'inline-block';
+    if (paymentsSection) paymentsSection.style.display = 'block';
+    renderAllPayments();
+  }
 
+  else if (role === 'admin') {
+    const paymentNav = document.getElementById('paymentNavItem');
+    if (paymentNav) paymentNav.style.display = 'none';
+  }
 
+  else if (role === 'associate') {
 
-// Format YYYY-MM-DD to DD-MM-YYYY
-function formatDateToDDMMYYYY(dateString) {
-  if (!dateString) return "";
-  const [year, month, day] = dateString.split("-");
-  return `${day}-${month}-${year}`;
-}
+  const name = associateMap[email] || email;
+  console.log("✅ Associate Name:", name);
+  window.loggedInAssociateName = name;
 
-// Format expiry display with days remaining
-function formatDaysRemaining(nocexpirydate) {
-  const formattedDate = formatDateToDDMMYYYY(nocexpirydate);
-  if (!nocexpirydate) return "";
-  const expiry = new Date(nocexpirydate);
-  const today = new Date();
-  const timeDiff = expiry - today;
-  const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-  if (daysRemaining > 90 || daysRemaining < 0) return formattedDate;
-  const color = daysRemaining <= 15 ? 'red' : 'inherit';
-  const suffix = `<br><span style="color:${color};">(${daysRemaining} days left)</span>`;
-  return formattedDate + suffix;
-}
+  const selectorsToHide = [
+    "#paymentNavItem",
+    "#searchBar",
+    "#searchButton",
+    "#home",
+    "#filterPanel",
+    "#dashboardSection",
+    ".stats-grid",
+    ".charts-grid"
+  ];
 
-
-
-
-// Define this near the top or before you assign the button click handler
-function searchClients() {
-  document.getElementById('formContainer').style.display = 'none';
-
-  const dashboard = document.getElementById("dashboardSection");
-  if (dashboard) dashboard.classList.add("hidden");
-
-  const statsGrid = document.querySelector('.stats-grid');
-  const chartsGrid = document.querySelector('.charts-grid');
-  const expiringTable = document.querySelector('.expiring-table');
-
-  if (statsGrid) statsGrid.style.display = 'none';
-  if (chartsGrid) chartsGrid.style.display = 'none';
-  if (expiringTable) expiringTable.style.display = 'none';
-
-  const query = document.getElementById('searchBar')?.value.trim().toLowerCase() || '';
-  if (!query) return getData();
-
-  supabase.from('Appdata').select('*').then(({ data, error }) => {
-    if (error) return console.error('Search Error:', error);
-
-    const filtered = data.filter(client =>
-      (client.appno?.toString().toLowerCase().includes(query)) ||
-      (client.clientname?.toLowerCase().includes(query))
-    );
-
-    populateTable(filtered);
-    document.querySelector('.table-wrapper').style.display = filtered.length ? 'block' : 'none';
-    if (!filtered.length) alert("No matching records found.");
-  });
-}
-
-
-
-
-// Search triggers
-document.getElementById('searchButton')?.addEventListener('click', searchClients);
-document.getElementById('searchBar')?.addEventListener('keydown', e => {
-  if (e.key === 'Enter') searchClients();
-});
-
-
-function renderTableRow(client, showPen = false) {
-  const formattedNocDate = formatDateToDDMMYYYY(client.nocdate);
-  const expiryDisplay = formatDaysRemaining(client.nocexpirydate);
-  return `
-    <tr>
-      <td>${client.appno || ''}</td>
-      <td>${client.clientname || ''}</td>
-      <td>${client.status || ''}</td>
-      <td>${client.apptype || ''}</td>
-      <td>${client.loginid || ''}</td>
-      <td>${client.password || ''}</td>
-      <td>${client.handledby || ''}</td>
-      <td>${formattedNocDate || ''}</td>
-      <td>${expiryDisplay || ''}</td>
-      <td>${client.appstatus || ''}</td>
-      <td>${client.remarks || ''}
-        ${showPen ? `<br><span class="edit-icon" style="cursor:pointer; color:#1a73e8;" title="Edit" data-appno="${client.appno}"> Edit </span>` : ''}
-      </td>
-    </tr>
-  `;
-}
-
-function populateTable(data) {
-  const tableBody = document.getElementById('clientTable') || document.getElementById('table-body');
-  if (!tableBody) return;
-  tableBody.innerHTML = '';
-  const showPen = true; // Set to true to show edit icons
-      data.forEach(client => {
-    tableBody.innerHTML += renderTableRow(client, showPen);
+  // 🔥 Hide these immediately on login
+  selectorsToHide.forEach(selector => {
+    const el = document.querySelector(selector);
+    if (el) el.style.display = "none";
+    else console.warn(`⚠️ Missing element: ${selector}`);
   });
 
-  document.addEventListener('click', function (e) {
-    if (e.target && e.target.classList.contains('edit-icon')) {
-      const appno = e.target.dataset.appno;
-      if (appno) updateApp({ appno });
-      else alert('Missing app number.');
-    }
-  });
-}
+  // ✅ Show associate home
+  const associateHome = document.getElementById("associateHome");
+  if (associateHome) associateHome.style.display = "block";
 
-async function updateApp({ appno }) {
-  try {
-    const { data: record, error } = await supabase
-      .from('Appdata')
-      .select('*')
-      .eq('appno', appno)
-      .single();
+  // 🔁 Set up company name click to do the same hide/show
+  const companyNameEl = document.getElementById("companyName");
+  if (companyNameEl) {
+    companyNameEl.addEventListener("click", () => {
+      selectorsToHide.forEach(selector => {
+        const el = document.querySelector(selector);
+        if (el) el.style.display = "none";
+      });
 
-    if (error || !record) {
-      throw new Error('Could not fetch application data.');
-    }
+      if (associateHome) associateHome.style.display = "block";
 
-    renderAppForm('update', record); // ✅ this will now prefill correctly
-  } catch (err) {
-    console.error('Error in updateApp:', err.message);
-    alert('Failed to load the application for update.');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   }
 }
+}
 
-document.addEventListener("DOMContentLoaded", () => {
-  (async () => {
-    const { data: { user }, error } = await supabase.auth.getUser();
-
-    if (!user || error) {
-      showAuthForm();
-    } else {
-      closeAuthBox();
-      // checkUserRole();
-    }
-
-    getData();
-  })();
+document.getElementById("logoutLink").addEventListener("click", async () => {
+  await supabase.auth.signOut();
+  showNotification("You have been logged out.");
+  location.reload();
 });
+
+
+
+
+
+// document.addEventListener("DOMContentLoaded", () => {
+//   (async () => {
+//     const { data: { user }, error } = await supabase.auth.getUser();
+
+//     if (!user || error) {
+//       showAuthForm();
+//     } else {
+//       closeAuthBox();
+//       // checkUserRole();
+//     }
+
+//     // getData();
+//   })();
+// });
 
 
 
@@ -528,18 +465,18 @@ async function fetchUserRole() {
 }
 
 
-async function renderAllApplications() {
-  const { data, error } = await supabase
-    .from('Appdata')
-    .select('*');
+// async function renderAllApplications() {
+//   const { data, error } = await supabase
+//     .from('Appdata')
+//     .select('*');
 
-  if (error) {
-    console.error("Error fetching all applications:", error);
-    return;
-  }
+//   if (error) {
+//     console.error("Error fetching all applications:", error);
+//     return;
+//   }
 
-  populateTable(data); // This should be your function to render rows
-}
+//   populateTable(data); // This should be your function to render rows
+// }
 
 async function renderApplicationsByHandledBy(name) {
   const { data, error } = await client
@@ -634,68 +571,7 @@ function renderAssociateTable(applications) {
 
 
 
-function applyRoleBasedUI(role, email) {
-  if (role === 'owner') {
-    const paymentNavItem = document.getElementById('paymentNavItem');
-    const paymentsSection = document.getElementById('paymentsSection');
 
-    if (paymentNavItem) paymentNavItem.style.display = 'inline-block';
-    if (paymentsSection) paymentsSection.style.display = 'block';
-
-    renderAllApplications();
-    renderAllPayments();
-  }
-
-  else if (role === 'admin') {
-    const paymentNav = document.getElementById('paymentNavItem');
-    if (paymentNav) paymentNav.style.display = 'none';
-  }
-
-  else if (role === 'associate') {
-  console.log("🎯 Applying associate UI");
-
-  const name = associateMap[email] || email;
-  console.log("✅ Associate Name:", name);
-  window.loggedInAssociateName = name;
-
-  const selectorsToHide = [
-    "#paymentNavItem",
-    "#searchBar",
-    "#searchButton",
-    "#home",
-    "#filterPanel",
-    "#dashboardSection",
-    ".stats-grid",
-    ".charts-grid"
-  ];
-
-  // 🔥 Hide these immediately on login
-  selectorsToHide.forEach(selector => {
-    const el = document.querySelector(selector);
-    if (el) el.style.display = "none";
-    else console.warn(`⚠️ Missing element: ${selector}`);
-  });
-
-  // ✅ Show associate home
-  const associateHome = document.getElementById("associateHome");
-  if (associateHome) associateHome.style.display = "block";
-
-  // 🔁 Set up company name click to do the same hide/show
-  const companyNameEl = document.getElementById("companyName");
-  if (companyNameEl) {
-    companyNameEl.addEventListener("click", () => {
-      selectorsToHide.forEach(selector => {
-        const el = document.querySelector(selector);
-        if (el) el.style.display = "none";
-      });
-
-      if (associateHome) associateHome.style.display = "block";
-
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  }
-}
-}
 
 window.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
@@ -767,6 +643,145 @@ document.getElementById('showApplicationsBtn')?.addEventListener('click', () => 
       if (appno) updateApp({ appno });
     });
   });
+
+
+// Format YYYY-MM-DD to DD-MM-YYYY
+function formatDateToDDMMYYYY(dateString) {
+  if (!dateString) return "";
+  const [year, month, day] = dateString.split("-");
+  return `${day}-${month}-${year}`;
+}
+
+// Format expiry display with days remaining
+function formatDaysRemaining(nocexpirydate) {
+  const formattedDate = formatDateToDDMMYYYY(nocexpirydate);
+  if (!nocexpirydate) return "";
+  const expiry = new Date(nocexpirydate);
+  const today = new Date();
+  const timeDiff = expiry - today;
+  const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+  if (daysRemaining > 90 || daysRemaining < 0) return formattedDate;
+  const color = daysRemaining <= 15 ? 'red' : 'inherit';
+  const suffix = `<br><span style="color:${color};">(${daysRemaining} days left)</span>`;
+  return formattedDate + suffix;
+}
+
+
+
+
+// Define this near the top or before you assign the button click handler
+function searchClients() {
+  document.getElementById('formContainer').style.display = 'none';
+
+  const dashboard = document.getElementById("dashboardSection");
+  if (dashboard) dashboard.classList.add("hidden");
+
+  const statsGrid = document.querySelector('.stats-grid');
+  const chartsGrid = document.querySelector('.charts-grid');
+  const expiringTable = document.querySelector('.expiring-table');
+
+  if (statsGrid) statsGrid.style.display = 'none';
+  if (chartsGrid) chartsGrid.style.display = 'none';
+  if (expiringTable) expiringTable.style.display = 'none';
+
+  const query = document.getElementById('searchBar')?.value.trim().toLowerCase() || '';
+  if (!query) return getData();
+
+  supabase.from('Appdata').select('*').then(({ data, error }) => {
+    if (error) return console.error('Search Error:', error);
+
+    const filtered = data.filter(client =>
+      (client.appno?.toString().toLowerCase().includes(query)) ||
+      (client.clientname?.toLowerCase().includes(query))
+    );
+
+    populateTable(filtered);
+    document.querySelector('.table-wrapper').style.display = filtered.length ? 'block' : 'none';
+    if (!filtered.length) alert("No matching records found.");
+  });
+}
+
+
+
+
+// Search triggers
+document.getElementById('searchButton')?.addEventListener('click', searchClients);
+document.getElementById('searchBar')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') searchClients();
+});
+
+
+function renderTableRow(client, showPen = false) {
+  const formattedNocDate = formatDateToDDMMYYYY(client.nocdate);
+  const expiryDisplay = formatDaysRemaining(client.nocexpirydate);
+  return `
+    <tr>
+      <td>${client.appno || ''}</td>
+      <td>${client.clientname || ''}</td>
+      <td>${client.status || ''}</td>
+      <td>${client.apptype || ''}</td>
+      <td>${client.loginid || ''}</td>
+      <td>${client.password || ''}</td>
+      <td>${client.handledby || ''}</td>
+      <td>${formattedNocDate || ''}</td>
+      <td>${expiryDisplay || ''}</td>
+      <td>${client.appstatus || ''}</td>
+      <td>${client.remarks || ''}
+        ${showPen ? `<br><span class="edit-icon" style="cursor:pointer; color:#1a73e8;" title="Edit" data-appno="${client.appno}"> Edit </span>` : ''}
+      </td>
+    </tr>
+  `;
+}
+
+
+function populateTable(data) {
+  const tableBody = document.getElementById('clientTable') || document.getElementById('table-body');
+  if (!tableBody) return;
+  tableBody.innerHTML = '';
+  const showPen = true; // Set to true to show edit icons
+      data.forEach(client => {
+    tableBody.innerHTML += renderTableRow(client, showPen);
+  });
+
+  document.addEventListener('click', function (e) {
+    if (e.target && e.target.classList.contains('edit-icon')) {
+      const appno = e.target.dataset.appno;
+      if (appno) updateApp({ appno });
+      else alert('Missing app number.');
+    }
+  });
+}
+
+async function updateApp({ appno }) {
+  try {
+    const { data: record, error } = await supabase
+      .from('Appdata')
+      .select('*')
+      .eq('appno', appno)
+      .single();
+
+    if (error || !record) {
+      throw new Error('Could not fetch application data.');
+    }
+
+    renderAppForm('update', record); // ✅ this will now prefill correctly
+  } catch (err) {
+    console.error('Error in updateApp:', err.message);
+    alert('Failed to load the application for update.');
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
