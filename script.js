@@ -308,7 +308,8 @@ authFormEl.addEventListener("submit", async (e) => {
 
     // ✅ Now hide login form and show dashboard
     closeAuthBox();
-    // checkUserRole();
+    location.reload();
+
 
   } else {
     // 🆕 SIGNUP section
