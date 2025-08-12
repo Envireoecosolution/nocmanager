@@ -64,6 +64,13 @@ async function loadPaymentData() {
     return;
   }
 
+  // ✅ Sort by numeric part of invoice number
+data.sort((a, b) => {
+  const numA = parseInt(a.invoiceno.split('/')[1], 10);
+  const numB = parseInt(b.invoiceno.split('/')[1], 10);
+  return numA - numB;
+});
+
   tableBody.innerHTML = ''; // Clear any existing rows
 
   data.forEach((row, index) => {
@@ -80,7 +87,6 @@ async function loadPaymentData() {
       <td style="text-align: right;">${formatCurrency(row.gst)}</td>
       <td style="text-align: right;">${formatCurrency(row.tds)}</td>
       <td style="text-align: right;">${formatCurrency(row.amount)}</td>
-      
       <td style="text-align: right;">${formatCurrency(row["1streceived"])}</td>
       <td>${formatDateToDDMMYYYY(row.dateofrec)}</td>
       <td style="text-align: right;">${formatCurrency(row.pending)}</td>

@@ -13,7 +13,6 @@ let allClients = [];
   };
 
 
-
   (async () => {
   const { data: { user }, error } = await supabase.auth.getUser();
 
