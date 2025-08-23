@@ -12,6 +12,8 @@ function renderFilterPanel() {
   if (!panel) return;
 
   panel.innerHTML = `
+
+  <button id="downloadall">Download All<br>Applications Data</button><br><br>
   <h1>Filters✨</h1><br>
   <h3><u>Status:</u></h3>
     ${renderCheckboxGroup('status', statusOptions)}
@@ -23,6 +25,24 @@ function renderFilterPanel() {
     ${renderCheckboxGroup('expiry', expiryOptions, true)}
 
   `;
+
+  panel.innerHTML = `
+  <button id="downloadall">Download All<br>Applications Data</button><br><br>
+  <h1>Filters✨</h1><br>
+  <h3><u>Status:</u></h3>
+    ${renderCheckboxGroup('status', statusOptions)}
+
+    <br><h3><u>Handled By:</u></h3>
+    ${renderCheckboxGroup('handledBy', handledByOptions)}
+
+    <br> <h3><u>Expiry:</u></h3>
+    ${renderCheckboxGroup('expiry', expiryOptions, true)}
+`;
+
+// attach listener immediately after rendering
+document.getElementById("downloadall")
+  ?.addEventListener("click", exportAllApplicationsToExcel);
+
 
   // Attach listeners after injecting
   document.querySelectorAll('.filter-checkbox').forEach(cb => {
@@ -170,4 +190,14 @@ document.querySelectorAll('#filterPanel input[type="checkbox"]').forEach(checkbo
 });
 
 
-// document.addEventListener('DOMContentLoaded', renderFilterPanel);
+function exportAllApplicationsToExcel() {
+  if (!allClients || allClients.length === 0) {
+    alert("No application data available to export.");
+    return;
+  }
+  const worksheet = XLSX.utils.json_to_sheet(allClients);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "All Applications");
+  XLSX.writeFile(workbook, `All_Applications_${new Date().toISOString().slice(0, 10)}.xlsx`);
+}
+
