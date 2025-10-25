@@ -7,7 +7,7 @@ let allClients = [];
 
   // Map associate email to name
   const associateMap = {
-    'akshay1.envireoeco@gmail.com': 'Akshay Kumar',
+    'akshay1.envireoeco@gmail.com': 'Akshay',
     'anchal04aggarwal@gmail.com': 'Anchal Aggarwal',
     'itsgarima1796@gmail.com': 'Garima Singh',
   };

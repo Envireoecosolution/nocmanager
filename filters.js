@@ -85,8 +85,8 @@ function getCheckboxClass(group, value) {
       case 'rajesh makker': return 'handled-rajesh';
       case 'anchal aggarwal': return 'handled-anchal';
       case 'garima singh': return 'handled-garima';
-      case 'prashant': return 'handled-prashant';
-      case 'akshay kumar': return 'handled-akshay';
+      case 'himanshi awasthi': return 'handled-himanshi';
+      case 'akshay': return 'handled-akshay';
     }
   }
 
