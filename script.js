@@ -10,7 +10,7 @@ let allClients = [];
     'akshay1.envireoeco@gmail.com': 'Akshay',
     'anchal04aggarwal@gmail.com': 'Anchal Aggarwal',
     'itsgarima1796@gmail.com': 'Garima Singh',
-    'Himanshi.envireoeco@gmail.com': 'Himanshi Awasthi'
+    'himanshi.envireoeco@gmail.com': 'Himanshi Awasthi'
   };
 
 
@@ -63,7 +63,7 @@ function applyRoleBasedUI(role, email) {
   else if (role === 'associate') {
 
   const name = associateMap[email] || email;
-  console.log("✅ Associate Name:", name);
+  console.log("Associate Name:", name);
   window.loggedInAssociateName = name;
 
   const selectorsToHide = [
