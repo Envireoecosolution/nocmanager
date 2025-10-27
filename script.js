@@ -10,6 +10,7 @@ let allClients = [];
     'akshay1.envireoeco@gmail.com': 'Akshay',
     'anchal04aggarwal@gmail.com': 'Anchal Aggarwal',
     'itsgarima1796@gmail.com': 'Garima Singh',
+    'Himanshi.envireoeco@gmail.com': 'Himanshi Awasthi'
   };
 
 
@@ -475,7 +476,7 @@ async function fetchUserRole() {
 //     return;
 //   }
 
-//   populateTable(data); // This should be your function to render rows
+//   populateTable(data); // This should be function to render rows
 // }
 
 async function renderApplicationsByHandledBy(name) {
@@ -565,12 +566,6 @@ function renderAssociateTable(applications) {
   // Show table
   tableWrapper.style.display = "block";
 }
-
-
-
-
-
-
 
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -770,19 +765,6 @@ async function updateApp({ appno }) {
     alert('Failed to load the application for update.');
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 document.addEventListener('DOMContentLoaded', getData);
