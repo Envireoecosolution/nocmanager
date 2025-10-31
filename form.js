@@ -117,6 +117,11 @@ async function renderAppForm(mode, client = {}) {
   showNotification("Application updated successfully!");
   goHome(); // Go back to homepage
   getData(); // Refresh data
+  const role = localStorage.getItem('userRole');
+const email = localStorage.getItem('userEmail');
+if (role && typeof applyRoleBasedUI === 'function') {
+  applyRoleBasedUI(role, email);
+}
 }
 
 } else {
@@ -146,6 +151,13 @@ async function renderAppForm(mode, client = {}) {
   e.target.reset();
   goHome(); // Navigate to homepage and reset UI
   getData(); // Refresh data (optional if goHome already calls it)
+
+  // ✅ Reapply role-based UI after data refresh
+const role = localStorage.getItem('userRole');
+const email = localStorage.getItem('userEmail');
+if (role && typeof applyRoleBasedUI === 'function') {
+  applyRoleBasedUI(role, email);
+}
 }
 
 }
