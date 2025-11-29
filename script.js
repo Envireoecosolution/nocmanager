@@ -111,27 +111,6 @@ document.getElementById("logoutLink").addEventListener("click", async () => {
   location.reload();
 });
 
-
-
-
-
-// document.addEventListener("DOMContentLoaded", () => {
-//   (async () => {
-//     const { data: { user }, error } = await supabase.auth.getUser();
-
-//     if (!user || error) {
-//       showAuthForm();
-//     } else {
-//       closeAuthBox();
-//       // checkUserRole();
-//     }
-
-//     // getData();
-//   })();
-// });
-
-
-
 async function getData() {
   const { data, error } = await supabase.from('Appdata').select('*');
   if (error) return console.error("Error fetching data:", error);

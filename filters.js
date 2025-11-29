@@ -2,9 +2,9 @@
 const filters = {
   status: [],
   handledBy: [],
-  expiry: []
+  expiry: [],
+  appstatus: [] // ✅ NEW FILTER
 };
-
 
 
 function renderFilterPanel() {
@@ -23,6 +23,9 @@ function renderFilterPanel() {
 
     <br> <h3><u>Expiry:</u></h3>
     ${renderCheckboxGroup('expiry', expiryOptions, true)}
+
+    <br><h3><u>Application Status:</u></h3> <!-- ✅ NEW SECTION -->
+    ${renderCheckboxGroup('appstatus', appStatusOptions)}
 
   `;
 
@@ -65,7 +68,6 @@ function renderCheckboxGroup(name, options, numeric = false) {
     `;
   }).join('');
 }
-
 
 
 function getCheckboxClass(group, value) {
