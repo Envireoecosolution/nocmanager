@@ -1,7 +1,14 @@
 // Supabase configuration via CDN
 const supabaseUrl = 'https://uewuhdigjdrbfcuasibe.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VoZGlnamRyYmZjdWFzaWJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTEzMTAsImV4cCI6MjA2NTEyNzMxMH0.yTTRgpMlumq5gyblYxfqfIvJDsmn0THY6rj1pflUQ-k';
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+// const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+window.supabaseClient = window.supabase.createClient(
+  supabaseUrl,
+  supabaseKey
+);
+
+window.supabase = window.supabaseClient;
+
 
 let allClients = [];
 

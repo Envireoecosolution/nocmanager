@@ -1,4 +1,7 @@
 
+// const supabase = window.supabaseClient;
+
+
 const filters = {
   status: [],
   handledBy: [],

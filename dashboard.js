@@ -1,5 +1,8 @@
 // ✅ Fixed dashboard.js with case-insensitive first-letter match for 'handledBy'
 
+// const supabase = window.supabaseClient;
+
+
 document.addEventListener('DOMContentLoaded', async () => {
   const { data, error } = await supabase.from('Appdata').select('*');
   if (!data) {
