@@ -703,6 +703,9 @@ function renderTableRow(client, showPen = false) {
       <td>${client.apptype || ''}</td>
       <td>${client.loginid || ''}</td>
       <td>${client.password || ''}</td>
+      <td>${client.hepclogin || ''}</td>
+      <td>${client.hepcpassword || ''}</td>
+      <td>${client.cafno || ''}</td>
       <td>${client.handledby || ''}</td>
       <td>${formattedNocDate || ''}</td>
       <td>${expiryDisplay || ''}</td>

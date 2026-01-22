@@ -96,6 +96,9 @@ async function renderAppForm(mode, client = {}) {
   document.getElementById('clientname').value = client.clientname || '';
   document.getElementById('loginid').value = client.loginid || '';
   document.getElementById('passsword').value = client.password || '';
+  document.getElementById('hepclogin').value = client.hepclogin || '';
+  document.getElementById('hepcpassword').value = client.hepcpassword || '';
+  document.getElementById('cafno').value = client.cafno || '';
   document.getElementById('nocdate').value = client.nocdate || '';
   document.getElementById('nocexpirydate').value = client.nocexpirydate || '';
   document.getElementById('remarks').value = client.remarks || '';
@@ -190,9 +193,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-
-
-window.addApp = addApp;
 
 window.renderAppForm = renderAppForm;
 

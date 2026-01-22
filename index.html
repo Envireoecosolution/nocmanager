@@ -101,6 +101,9 @@
           <th>Application<br>Type</th>
           <th>Login ID</th>
           <th>Password</th>
+          <th>HEPC Login</th>
+          <th>HEPC Password</th>
+          <th>CAF No.</th>
           <th>Handled By</th>
           <th>NOC <br>Date</th>
           <th>NOC Expiry <br>Date</th>
@@ -145,6 +148,15 @@
     <label>Password:
       <input class="input-field" type="text" name="password" id="passsword" required autocomplete="current-password">
     </label>
+    <label>HEPC Login</label>
+    <input type="text" id="hepclogin">
+    
+    <label>HEPC Password</label>
+    <input type="text" id="hepcpassword">
+    
+    <label>CAF No.</label>
+    <input type="text" id="cafno">
+
     <label>Handled By:
       <select class="select-field" name="handledby" id="handledby">
         <option value="">-- Select Handler --</option>
@@ -332,7 +344,7 @@
       </div>
 
       <div class="form-options">
-        <label><input type="checkbox"> Remember me</label>
+        <!-- <label><input type="checkbox"> Remember me</label> -->
         <a href="#">Forgot Password</a>
       </div>
 
