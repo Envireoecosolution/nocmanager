@@ -536,6 +536,9 @@ function renderAssociateTable(applications) {
       <td>${app.apptype || ''}</td>
       <td>${app.loginid || ''}</td>
       <td>${app.password || ''}</td>
+      <td>${app.hepclogin || ''}</td>
+      <td>${app.hepcpassword || ''}</td>
+      <td>${app.cafno || ''}</td>
       <td>${app.handledby || ''}</td>
       <td>${app.nocdate || ''}</td>
       <td>${app.nocexpirydate || ''}</td>

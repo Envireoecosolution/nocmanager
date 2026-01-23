@@ -149,22 +149,22 @@ table {
   border-collapse: collapse;
   font-size: 14px;
   background-color: white;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0,0,0.2,0.2);
   border: 1px solid #ddd;
 }
 
 #appTable th {
-  background-color: #f8f9fa;
+  background-color: #c0c1a6;
   text-align: center;
   font-weight: bold;
-  border: 1px solid #dee2e6;
-  padding: 10px;
+  border: 1px solid #6e9cca;
+  padding: 5px;
   white-space: nowrap;
 }
 
 #appTable td {
-  border: 1px solid #dee2e6;
-  padding: 10px;
+  border: 1px solid #6e9cca;
+  padding: 2px;
   text-align: left;
   vertical-align: middle;
   white-space: nowrap;
@@ -194,12 +194,13 @@ table {
   background-color: #f1f1f1;
 }
 
-/* Prevent wrapping for date columns */
+/* Prevent wrapping for date columns  */
 #appTable th:nth-child(8), #appTable td:nth-child(8),  /* NOC Date */
 #appTable th:nth-child(9), #appTable td:nth-child(9) { /* NOC Expiry Date */
   white-space: nowrap;
   width: 10px; 
 }
+
 
 
 #appTable th:nth-child(2),
