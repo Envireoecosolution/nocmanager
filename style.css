@@ -3,13 +3,13 @@ html {
 }
 
 body {
-  min-height: 100vh;
+  min-height: 99vh;
   display: flex;
   flex-direction: column;
 }
-
+/* 'Playpen Sans Hebrew', Helvetica, Arial, sans-serif, font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; */
 *{
-      font-family: Helvetica, Arial, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
       /* font-weight: 500; */
       margin: 0;
       padding: 0;
@@ -39,13 +39,12 @@ body {
 }
 
 .navbar-left h1 {
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
-  text-transform: uppercase;
   color: #333;
-  margin: 2px 2px;
+  /* margin: 2px 2px; */
   line-height: 1.2;
-  word-break: break-word;
+  /* word-break: break-word; */
   cursor: pointer;
 }
 
@@ -54,14 +53,14 @@ body {
   justify-content: center;
   align-items: center;
   gap: 10px;
-  max-width: 800px;
+  max-width: 700px;
   width: 100%;
   margin: 0 auto;
 }
 
 #searchBar {
   width: 500px;
-  max-width: 100%;
+  max-width: 60%;
   padding: 10px 12px;
   font-size: 15px;
   border: 1px solid #ccc;
@@ -86,6 +85,7 @@ body {
 }
 
 .navbar-right {
+  font-weight: bold;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
@@ -184,6 +184,7 @@ table {
   width: 100%;
   overflow-x: auto;
   overflow-y: auto;
+  max-height: calc(100vh - 10px);
   background-color: #ffffff;
   border-radius: 6px;
   margin-top: 10px;
@@ -267,7 +268,7 @@ max-width: 400px;      /* fixed width */
   background-color: rgb(53, 53, 53);
   color: #fff;
   font-weight: 600;
-  font-family: inherit;
+  /* font-family: inherit; */
 }
 
 /* ✅ Placeholder style */
@@ -340,7 +341,7 @@ max-width: 400px;      /* fixed width */
 
 
 .stats-grid {
-  font-family: 'Playpen Sans Hebrew', Helvetica, Arial, sans-serif;
+  /* font-family: 'Playpen Sans Hebrew', Helvetica, Arial, sans-serif; */
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
@@ -350,29 +351,30 @@ max-width: 400px;      /* fixed width */
 }
 
 .stat-card {
- background: #e6f0ff;
+ background: #a9c1e685;
     border-radius: 6px;
     padding: 2px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
-    width: 170px;
-    max-width: 170px;
+    width: 150px;
+    max-width: 150px;
+    max-height: fit-content;
     margin: 5px;
 }
 
 .stat-card h3 {
   font-size: 16px;
   font-weight: 700;
-  margin-bottom: 10px;
-  margin-top: 10px;
-  color: #333;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  color: black;
 }
 
 .stat-card p {
   font-size: 40px;
   font-weight: bold;
   color: #007bff;
-  margin: 10px 20px 10px 20px;
+  /* margin: 10px 20px 10px 20px; */
 }
 
 .charts-grid {
@@ -408,10 +410,10 @@ max-width: 400px;      /* fixed width */
 
 .chart-card h4 {
   text-align: center;
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 16px;
-  color: #333;
+  font-size: 1.35rem;
+  /* font-weight: 600; */
+  margin-bottom: 10px;
+  color: black;
 }
 
 #associatePieChart {
@@ -442,10 +444,13 @@ max-width: 400px;      /* fixed width */
   color: #fff;
 }
 
-.legend-block.green { background-color: #006acdff; }
-.legend-block.pink { background-color: #fd5113ff; }
+/* .legend-block.green { background-color: #006acdff; }
 .legend-block.blue { background-color: #00ff15ff; }
-.legend-block.yellow { background-color: #e9c407ff; }
+.legend-block.yellow { background-color: #e9c407ff; } */
+
+.legend-block.green { background-color: #00ff15ff; }
+.legend-block.blue { background-color: #006acdff; }
+.legend-block.orange { background-color: rgb(233, 120, 21); }
 
 
 #statusPieChart {
@@ -487,12 +492,13 @@ max-width: 400px;      /* fixed width */
 
 
 .filter-panel {
-  width: 270px;
+  width: 200px;
   font-weight: bolder;
-  padding: 10px;
+  padding: 5px;
   border-right: 1px solid #ccc;
   min-height: 100vh; /* ensure it stretches full height */
   box-sizing: border-box;
+  overflow: hidden;
 }
 
   #downloadall {
@@ -517,11 +523,6 @@ max-width: 400px;      /* fixed width */
     background-color: #3e8e41;
     transform: translateY(0);
   }
-
-.filter-and-main {
-  display: flex;
-  align-items: flex-start;
-}
 
 
 .filter-checkbox + span,
@@ -564,15 +565,14 @@ label {
 .handled-sachit { color: #1e88e5; }
 .handled-tina { color: #6a1b9a; }
 .handled-rajesh { color: #cb1313dd; }
-.handled-anchal { color: #f57c00; }
 .handled-garima { color: #2e7d32; }
 .handled-himanshi { color: #bb15a8; }
 .handled-akshay { color: #742626; }
 
 
-#filterPanel h3 {
+/* #filterPanel h3 {
   font-weight: bolder;
-}
+} */
 
 
 .main {
@@ -582,8 +582,11 @@ label {
 
 .filter-and-main {
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   width: 100%;
+  height: calc(100vh - 62px - 38px); /* adjust navbar & footer height */
+  /* overflow: hidden; */
+
 }
 
 .main-panel {
@@ -755,7 +758,7 @@ label {
  .styled-table {
     width: 100%;
     border-collapse: collapse;
-    font-family: sans-serif;
+    /* font-family: sans-serif; */
     margin-top: 20px;
   }
   .styled-table th,
@@ -778,7 +781,7 @@ label {
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    font-family: sans-serif;
+    /* font-family: sans-serif; */
   }
 
   .add-bill-card h1 {
