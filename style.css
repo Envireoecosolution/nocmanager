@@ -539,7 +539,7 @@ label {
 }
 
 .status-onhold {
-  color: #0937dd;
+  color: #23c6d1;
   font-weight: bolder;
   text-transform: uppercase;
 }
@@ -555,6 +555,13 @@ label {
   font-weight: bolder;
   text-transform: uppercase;
 }
+
+.status-recommended {
+  color: #3137e2;
+  font-weight: bolder;
+  text-transform: uppercase;
+}
+
 
 [class^="handled-"] {
   font-weight: 900;

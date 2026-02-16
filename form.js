@@ -1,6 +1,6 @@
 
 // ✅ Define dropdown options once (moved out of filters.js)
-const statusOptions = ["Merged", "On Hold", "Closed", "Working"];
+const statusOptions = ["Merged", "On Hold", "Closed", "Working", "Recommended"];
 const appTypeOptions = ["New", "Renewal"];
 const handlerOptions = [
   "Sachit Aggarwal", "Tina Jain Aggarwal", "Rajesh Makker",

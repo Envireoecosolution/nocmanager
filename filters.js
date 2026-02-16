@@ -1,12 +1,9 @@
-
 // const supabase = window.supabaseClient;
-
 
 const filters = {
   status: [],
   handledBy: [],
   expiry: [],
-  appstatus: [] // ✅ NEW FILTER
 };
 
 
@@ -27,23 +24,7 @@ function renderFilterPanel() {
     <br> <h3><u>Expiry:</u></h3>
     ${renderCheckboxGroup('expiry', expiryOptions, true)}
 
-    <br><h3><u>Application Status:</u></h3> <!-- ✅ NEW SECTION -->
-    ${renderCheckboxGroup('appstatus', appStatusOptions)}
-
   `;
-
-  panel.innerHTML = `
-  <button id="downloadall">Download All<br>Applications Data</button><br><br>
-  <h1>Filters✨</h1><br>
-  <h3><u>Status:</u></h3>
-    ${renderCheckboxGroup('status', statusOptions)}
-
-    <br><h3><u>Handled By:</u></h3>
-    ${renderCheckboxGroup('handledBy', handledByOptions)}
-
-    <br> <h3><u>Expiry:</u></h3>
-    ${renderCheckboxGroup('expiry', expiryOptions, true)}
-`;
 
 // attach listener immediately after rendering
 document.getElementById("downloadall")
@@ -80,6 +61,7 @@ function getCheckboxClass(group, value) {
       case 'on hold': return 'status-onhold';
       case 'closed': return 'status-closed';
       case 'working': return 'status-working';
+      case 'recommended': return 'status-recommended';
     }
   }
 
@@ -115,11 +97,10 @@ function handleFilterChange() {
 }
 
 function applyFilters() {
-  // Ensure global filters object exists
-  if (typeof filters === 'undefined') {
-    console.warn("⚠️ 'filters' is not defined.");
-    return;
-  }
+  const excludedAppStatuses = [
+  "recommended to technical committee",
+  "recommended to authority"
+];
 
   const isAnyFilterActive =
     filters.status.length > 0 ||
@@ -130,7 +111,7 @@ function applyFilters() {
   const tableWrapperEl = document.querySelector(".table-wrapper");
 
   if (!isAnyFilterActive) {
-    if (dashboardSection) dashboardSection.classList.remove("hidden");
+    if (dashboardSection) dashboardSection.style.display = "block";
     if (tableWrapperEl) tableWrapperEl.style.display = "none";
     return; // ✅ Exit early — no filters active
   }
@@ -144,9 +125,25 @@ function applyFilters() {
       filters.handledBy.length === 0 ||
       filters.handledBy.some(h => handled === h.toLowerCase());
 
-    const statusMatch =
-      filters.status.length === 0 ||
-      filters.status.some(s => status === s.toLowerCase());
+  const statusMatch = (() => {
+  if (filters.status.length === 0) return true;
+
+  // match selected status
+  const matchesStatus = filters.status.some(
+    s => status === s.toLowerCase()
+  );
+
+  // extra exclusion ONLY when "working" is selected
+  if (matchesStatus && filters.status.includes("working")) {
+    const appStatus = (client.applicationstatus || "").trim().toLowerCase();
+    if (excludedAppStatuses.includes(appStatus)) {
+      return false;
+    }
+  }
+
+  return matchesStatus;
+})();
+
 
     const expiryMatch = (() => {
       if (filters.expiry.length === 0) return true;
@@ -175,23 +172,6 @@ function applyFilters() {
 
   populateTable(filtered);
 }
-
-
-document.querySelectorAll('#filterPanel input[type="checkbox"]').forEach(checkbox => {
-  checkbox.addEventListener('change', function (e) {
-    const { name, value, checked } = e.target;
-
-    if (!filters[name]) filters[name] = [];
-
-    if (checked) {
-      if (!filters[name].includes(value)) filters[name].push(value);
-    } else {
-      filters[name] = filters[name].filter(v => v !== value);
-    }
-
-    applyFilters();
-  });
-});
 
 
 function exportAllApplicationsToExcel() {
