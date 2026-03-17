@@ -17,7 +17,7 @@ let allClients = [];
     'akshay1.envireoeco@gmail.com': 'Akshay',
     'itsgarima1796@gmail.com': 'Garima Singh',
     'himanshi.envireoeco@gmail.com': 'Himanshi Awasthi',
-    'Rahulpandey.envireoeco@gmail.com': 'Rahul Pandey'
+    'rahulpandey.envireoeco@gmail.com': 'Rahul Pandey'
   };
 
 
@@ -487,6 +487,7 @@ async function renderApplicationsByHandledBy(name) {
 // only for associates
 
 async function loadAssociateApplications(associateName) {
+  console.log("Associate received:", `[${associateName}]`);
   try {
     // Fetch data from Supabase where handledby = associateName and status = 'Working'
     const { data, error } = await supabase
