@@ -16,7 +16,8 @@ let allClients = [];
   const associateMap = {
     'akshay1.envireoeco@gmail.com': 'Akshay',
     'itsgarima1796@gmail.com': 'Garima Singh',
-    'himanshi.envireoeco@gmail.com': 'Himanshi Awasthi'
+    'himanshi.envireoeco@gmail.com': 'Himanshi Awasthi',
+    'Rahulpandey.envireoeco@gmail.com': 'Rahul Pandey'
   };
 
 

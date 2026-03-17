@@ -4,7 +4,7 @@ const statusOptions = ["Merged", "On Hold", "Closed", "Working", "Recommended"];
 const appTypeOptions = ["New", "Renewal"];
 const handlerOptions = [
   "Sachit Aggarwal", "Tina Jain Aggarwal", "Rajesh Makker",
-   "Garima Singh", "Himanshi Awasthi", "Akshay"
+   "Garima Singh", "Himanshi Awasthi","Rahul Pandey", "Akshay"
 ];
 const appStatusOptions = [
   "Application Submitted fees not paid",

@@ -33,6 +33,7 @@ const workingData = data.filter(d => d.status?.toLowerCase() === 'working');
 const associateCounts = {
   Akshay: 0,
   Garima: 0,
+  Rahul: 0,
   Himanshi: 0
 };
 
@@ -48,6 +49,9 @@ workingData.forEach(app => {
   } else if (name.includes("himanshi")) {
     associateCounts.Himanshi++;
   } 
+  else if (name.includes("rahul")) {
+    associateCounts.Rahul++;
+  }
   // else if (name.includes("anchal")) {
   //   associateCounts.Anchal++;
   // }
@@ -89,11 +93,12 @@ function renderAssociatePieChart(data) {
   new Chart(ctx, {
     type: 'pie',
     data: {
-      labels: ['Garima', 'Himanshi', 'Akshay'],
+      labels: ['Garima', 'Himanshi','Rahul', 'Akshay'],
       datasets: [{
         data: [
           data['Garima'],
           data['Himanshi'],
+          data['Rahul'],
           data['Akshay'],
         ],
         backgroundColor: ['#006acdff', '#fd5113ff', '#00ff15ff', '#e9c407ff' ]

@@ -444,12 +444,10 @@ max-width: 400px;      /* fixed width */
   color: #fff;
 }
 
-/* .legend-block.green { background-color: #006acdff; }
-.legend-block.blue { background-color: #00ff15ff; }
-.legend-block.yellow { background-color: #e9c407ff; } */
 
 .legend-block.green { background-color: #00ff15ff; }
 .legend-block.blue { background-color: #006acdff; }
+.legend-block.red { background-color: #ef1515; }
 .legend-block.orange { background-color: rgb(233, 120, 21); }
 
 
@@ -574,6 +572,7 @@ label {
 .handled-rajesh { color: #cb1313dd; }
 .handled-garima { color: #2e7d32; }
 .handled-himanshi { color: #bb15a8; }
+.handled-rahul { color: #26ff22; }  
 .handled-akshay { color: #742626; }
 
 
