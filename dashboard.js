@@ -101,7 +101,7 @@ function renderAssociatePieChart(data) {
           data['Rahul'],
           data['Akshay'],
         ],
-        backgroundColor: ['rgb(255, 0, 251)', 'rgb(24, 223, 60)', '#ef1515', 'rgb(51, 143, 230)',]
+        backgroundColor: ['rgb(24, 223, 60)', 'rgb(255, 0, 251)', 'rgb(51, 143, 230)', '#ef1515', ]
       }]
     },
 
