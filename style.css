@@ -444,11 +444,10 @@ max-width: 400px;      /* fixed width */
   color: #fff;
 }
 
-
-.legend-block.green { background-color: #00ff15ff; }
-.legend-block.blue { background-color: #006acdff; }
+.legend-block.blue { background-color: rgb(255, 0, 251); }
+.legend-block.orange { background-color: rgb(24, 223, 60); }
 .legend-block.red { background-color: #ef1515; }
-.legend-block.orange { background-color: rgb(233, 120, 21); }
+.legend-block.green { background-color: rgb(51, 143, 230); }
 
 
 #statusPieChart {
@@ -918,5 +917,5 @@ label {
 }
 
 .shake-xy {
-  animation: shakeXY 0.6s ease;
+  animation: shakeXY 0.5s ease;
 }

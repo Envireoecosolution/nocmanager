@@ -447,7 +447,6 @@ async function fetchUserRole() {
   // ✅ Move these lines inside the function, using the actual `role` and `email`
   localStorage.setItem('userRole', role);
   localStorage.setItem('userEmail', email);
-
   console.log("Logged-in role:", role);
 }
 
